@@ -1,65 +1,74 @@
 <!DOCTYPE html>
-<html>
-<head lang="en"><!-- look into caching file manifest under HEAD -> manifest="app-file.manifest" -->
-	<title>GTFS Transit Route Viewer - Build 001</title>
+<html lang="en">
+  <head>
+    <!-- META TAG DEFINITIONS -->
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->  
+    <meta name="description" content="Don't forget to add a 1-2 sentence description here." />
+    <meta name="keywords" content="Don't forget to add 20-30 important keywords here." />
 
-	<!-- META TAG DEFINITIONS -->
-	<meta charset="UTF-8" />
-	<meta http-equiv="X-UA-Compatible" content="chrome=1" />
-	<meta name="description" content="Don't forget to add a 1-2 sentence description here." />
-	<meta name="keywords" content="Don't forget to add 20-30 important keywords here." />
-	<!--<meta name="viewport" content="width=device-width; initial-scale=1.0; maximum-scale=1.0; user-scalable=no;" />-->
-	<!--<meta name="apple-mobile-web-app-capable" content="yes"/> *** Unsure if needed *** -->
+    <!-- PAGE TITLE -->
+    <title>GTFS Transit Route Viewer - Build 001</title>
 
-	<!-- Place favicon.ico and apple-touch-icon(s) in the root directory -->
-	<!--<link rel="icon" type="image/png" href="logo.png" />-->
-
-	<!-- STYLESHEET FILE REFERENCES -->
-    <!--<link rel="stylesheet" href="css/reset.css" />-->
-    <!--<link rel="stylesheet" href="css/overcast/jquery-ui-1.10.4.custom.css" />-->
+    <!-- STYLESHEET FILE REFERENCES -->
+    <link href="css/bootstrap-3.3.4.min.css" rel="stylesheet">
     <link rel="stylesheet" href="css/main.css" />
-</head>
-<body>
-		<!-- HEADER + NAVBAR + TOOLBAR SECTION -->
-		<header>
-			<div id="title">
-				<!--<img src="logo.png" height="32px" class="fltlft"/>-->
-				<h1>Network Editor</h1>
-			</div>
-			<nav>
-				Navigation Info Here
-			</nav>
-			<div id="toolbar">
-				<div id="tb-files">REMOVE AND DESIGN BUILD 002</div>
-				<div id="tb-edit">Button Group #2</div>
-			</div>
-		</header>
+  </head>
+  <body>
+    <div class="container-fluid">
+      <div class="page-header">
+        <h1>GTFS Transit Route Viewer</h1>
+        <p class="lead">View GTFS data within Google Maps</p>
+      </div><!-- END Header -->
 
-		<aside>
-			Map Layers Here
-		</aside>
+      <div class="row">
+        <div class="col-md-3" id="sidebar">
+          <h2>Select Variables</h2>
+            <p>Agency:<br />
+              <select class="form-control" id="agency">
+                <option value="NULL">[ Select Transit Service ]</option>
+              </select>
+            </p>
+            <p>Route:<br />
+              <select class="form-control" id="route" disabled>
+                <option value="NULL">[ Select Route ]</option>
+              </select>
+            </p>
+            <p>Trip:<br />
+              <select class="form-control" id="trip" disabled>
+                <option value="NULL">[ Select Trip ID ]</option>
+              </select>
+            </p>
+        </div>
+        <div class="col-md-6" id="gmap">
+          Loading Map...
+        </div>
+        <div class="col-md-3" id="gtfs-data">
+          <h2>Output Data Display</h2>
+          <p>This is test data here. More data will be output here from analysis.</p>
+        </div>
+      </div><!-- END Main Content -->
+    </div><!-- END Container -->
+    <div id="footer">
+        Jon Kostyniuk &copy; 2015, Build 001
+    </div>
 
-		<div id="workspace">
-			Google Map Here
-		</div>
+    <!-- JAVASCRIPT FILE REFERENCES -->
+    <script src="js/jquery-1.11.2.min.js"></script>
+    <script src="js/bootstrap-3.3.4.min.js"></script>
+    <script src="https://maps.googleapis.com/maps/api/js?v=3.exp"></script>
+    <script src="js/main.js"></script>
 
-		<footer>
-			GTFS Transit Route Viewer, Copyright &copy; 2015, JK Enterprises, Build 001
-		</footer>
-
-		<!-- JAVASCRIPT FILE REFERENCES -->
-        <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
-        <script src="js/main.js"></script>
-
-        <!-- GOOGLE ANALYTICS SCRIPT: change UA-XXXXX-X to be your site's ID. -->
-        <script>
-            (function(b,o,i,l,e,r){b.GoogleAnalyticsObject=l;b[l]||(b[l]=
-            function(){(b[l].q=b[l].q||[]).push(arguments)});b[l].l=+new Date;
-            e=o.createElement(i);r=o.getElementsByTagName(i)[0];
-            e.src='//www.google-analytics.com/analytics.js';
-            r.parentNode.insertBefore(e,r)}(window,document,'script','ga'));
-            ga('create','UA-XXXXX-X');ga('send','pageview');
-        </script>
-</body>
+    <!-- GOOGLE ANALYTICS SCRIPT: change UA-XXXXX-X to be your site's ID. -->
+    <script>
+      (function(b,o,i,l,e,r){b.GoogleAnalyticsObject=l;b[l]||(b[l]=
+      function(){(b[l].q=b[l].q||[]).push(arguments)});b[l].l=+new Date;
+      e=o.createElement(i);r=o.getElementsByTagName(i)[0];
+      e.src='http://www.google-analytics.com/analytics.js';
+      r.parentNode.insertBefore(e,r)}(window,document,'script','ga'));
+      ga('create','UA-XXXXX-X');ga('send','pageview');
+    </script>  
+  </body>
 </html>
-

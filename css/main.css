@@ -2,173 +2,95 @@
    BASE STYLES
    ========================================================================== */
 
-html {
-    color: #222;
+/* CONTAINER ELEMENTS */
+html, body {
+    color: #222222;
     font-size: 1em;
-    line-height: 1.4;
+    line-height: 1.4em;
+    height: 100%;
 }
 
-/*
- * Remove text-shadow in selection highlight: h5bp.com/i
- * These selection rule sets have to be separate.
- * Customize the background color to match your design.
- */
-
-::-moz-selection {
-    background: #b3d4fc;
-    text-shadow: none;
+.container-fluid {
+    height: 100%;
+    width: 100%;
+    background: #cccccc;
 }
 
-::selection {
-    background: #b3d4fc;
-    text-shadow: none;
-}
 
-/*
- * A better looking default horizontal rule
- */
-
-hr {
-    display: block;
-    height: 1px;
-    border: 0;
-    border-top: 1px solid #ccc;
-    margin: 1em 0;
+/* PAGE HEADER ELEMENTS */
+.page-header {
+    height: 50px;
+    width: 100%;
     padding: 0;
+    margin: 0;
+    border-bottom: 0;
+}
+.page-header h1 {
+    font-size: 1.1em;
+    margin-top: 10px;
 }
 
-/*
- * Remove the gap between images, videos, audio and canvas and the bottom of
- * their containers: h5bp.com/i/440
- */
+.lead {
+    font-size: 12px;
+    margin-bottom: 0px;
+}
 
-audio,
-canvas,
-img,
-svg,
-video {
+
+/* PAGE BODY CLASS ELEMENTS */
+.row { /* Use to fill whole page */
+    position: absolute;
+    top: 70px; /* Header Height */
+    bottom: 20px; /* Footer Height */
+    width: 100%;
+}
+
+.col-md-2, .col-md-3, .col-md-6 {
+    height: 100%;
+}
+
+
+/* PAGE BODY ID ELEMENTS */
+#sidebar {
+    background: #eeeeee;
+}
+#sidebar h2 {
+    font-size: 0.9em;
+}
+#sidebar p {
+    font-size: 0.8em;
+}
+
+#gmap {
+    background: #ffffff;
+    padding: 0;
+    margin: 0;
+}
+
+#gtfs-data {
+    background: #eeeeee;
+}
+#gtfs-data h2 {
+    font-size: 0.9em;
+}
+#gtfs-data p {
+    font-size: 0.8em;
+}
+
+#footer {
+    padding: 0;
+    margin: 0;
+    display: block;
+    background: #aaaaaa;
+    position: absolute;
+    bottom: 0px;
+    height: 20px;
+    width: 100%;
+    text-align: center;
+    font-size: 0.7em;
+    line-height: 2.0em;
     vertical-align: middle;
 }
 
-/*
- * Remove default fieldset styles.
- */
-
-fieldset {
-    border: 0;
-    margin: 0;
-    padding: 0;
-}
-
-/*
- * Allow only vertical resizing of textareas.
- */
-
-textarea {
-    resize: vertical;
-}
-
-/* ==========================================================================
-   Browse Happy prompt
-   ========================================================================== */
-
-.browsehappy {
-    margin: 0.2em 0;
-    background: #ccc;
-    color: #000;
-    padding: 0.2em 0;
-}
-
-/* ==========================================================================
-   Author's custom styles
-   ========================================================================== */
-
-aside, nav, header, footer {
-    display: block;
-}
-
-body {
-width: 100%;
-background-color: #ffffff;
-margin-left: auto;
-margin-right: auto;
-font-family: Arial, Helvetica, sans-serif;
-}
-
-/* HEADER ELEMENTS */
-
-header {
-    display: block;
-    height: auto;
-    position: relative;
-    width: 100%;
-    z-index: 100;
-}
-
-header #title {
-    display: block;
-    height: auto;
-    width: 100%;
-    padding: 8px 8px 10px;
-    font-size: 14px;
-    text-transform: uppercase;
-    border: 1px solid;
-    border-color: #a69a2a;    
-    background-color: #fff380;
-    color: #313131;
-    font-weight: bold;
-}
-
-/* For 'nav' dropdown menu styles, see 'menu-dropdown.css' stylesheet */
-
-header #toolbar {
-    display: block;
-    position: relative;
-    font-size: 12px;
-    /*z-index: 2;*/
-    width: 100%;
-    height: 27px;
-    /*padding: 1px;*/
-    border: 1px solid;
-    border-color: #cccccc;  
-    background: -webkit-gradient(linear, left top, left bottom, from(#eeeeee), to(#cccccc));
-    background: -moz-linear-gradient(top, #eeeeee, #cccccc);
-}
-
-header #toolbar div {
-    margin: 1px 0px;
-    border: 1px solid #aaaaaa;
-    display: inline-block;
-    height: 24px;
-}
-
-/* SIDEBAR ELEMENTS */
-
-aside {
-    float: left;
-    width: 180px;
-    background-color: #fff8b9;
-    padding-bottom: 10px;
-}
-
-/* SVG WORKSPACE ELEMENTS */
-
-#workspace {
-    padding: 10px 0;
-    width: auto;
-    float: left;
-    border: 1px solid #dddddd;
-}
-
-/* FOOTER ELEMENTS */
-
-footer {
-    padding: 10px 0;
-    background-color: #CCC49F;
-    clear: both;
-    text-align: center;
-    font-size: 12px;
-}
 
 /* MISCELLANEOUS FLOAT/CLEAR CLASSES */
 .fltrt {  /* this class can be used to float an element right in your page. The floated element must precede the element it should be next to on the page. */
@@ -184,164 +106,4 @@ footer {
     height:0;
     font-size: 1px;
     line-height: 0px;
-}
-
-
-
-
-/* ==========================================================================
-   Helper classes
-   ========================================================================== */
-
-/*
- * Hide from both screenreaders and browsers: h5bp.com/u
- */
-
-.hidden {
-    display: none !important;
-    visibility: hidden;
-}
-
-/*
- * Hide only visually, but have it available for screenreaders: h5bp.com/v
- */
-
-.visuallyhidden {
-    border: 0;
-    clip: rect(0 0 0 0);
-    height: 1px;
-    margin: -1px;
-    overflow: hidden;
-    padding: 0;
-    position: absolute;
-    width: 1px;
-}
-
-/*
- * Extends the .visuallyhidden class to allow the element to be focusable
- * when navigated to via the keyboard: h5bp.com/p
- */
-
-.visuallyhidden.focusable:active,
-.visuallyhidden.focusable:focus {
-    clip: auto;
-    height: auto;
-    margin: 0;
-    overflow: visible;
-    position: static;
-    width: auto;
-}
-
-/*
- * Hide visually and from screenreaders, but maintain layout
- */
-
-.invisible {
-    visibility: hidden;
-}
-
-/*
- * Clearfix: contain floats
- *
- * For modern browsers
- * 1. The space content is one way to avoid an Opera bug when the
- *    `contenteditable` attribute is included anywhere else in the document.
- *    Otherwise it causes space to appear at the top and bottom of elements
- *    that receive the `clearfix` class.
- * 2. The use of `table` rather than `block` is only necessary if using
- *    `:before` to contain the top-margins of child elements.
- */
-
-.clearfix:before,
-.clearfix:after {
-    content: " "; /* 1 */
-    display: table; /* 2 */
-}
-
-.clearfix:after {
-    clear: both;
-}
-
-/* ==========================================================================
-   EXAMPLE Media Queries for Responsive Design.
-   These examples override the primary ('mobile first') styles.
-   Modify as content requires.
-   ========================================================================== */
-
-@media only screen and (min-width: 35em) {
-    /* Style adjustments for viewports that meet the condition */
-}
-
-@media print,
-       (-o-min-device-pixel-ratio: 5/4),
-       (-webkit-min-device-pixel-ratio: 1.25),
-       (min-resolution: 120dpi) {
-    /* Style adjustments for high resolution devices */
-}
-
-/* ==========================================================================
-   Print styles.
-   Inlined to avoid required HTTP connection: h5bp.com/r
-   ========================================================================== */
-
-@media print {
-    * {
-        background: transparent !important;
-        color: #000 !important; /* Black prints faster: h5bp.com/s */
-        box-shadow: none !important;
-        text-shadow: none !important;
-    }
-
-    a,
-    a:visited {
-        text-decoration: underline;
-    }
-
-    a[href]:after {
-        content: " (" attr(href) ")";
-    }
-
-    abbr[title]:after {
-        content: " (" attr(title) ")";
-    }
-
-    /*
-     * Don't show links for images, or javascript/internal links
-     */
-
-    a[href^="javascript:"]:after,
-    a[href^="#"]:after {
-        content: "";
-    }
-
-    pre,
-    blockquote {
-        border: 1px solid #999;
-        page-break-inside: avoid;
-    }
-
-    thead {
-        display: table-header-group; /* h5bp.com/t */
-    }
-
-    tr,
-    img {
-        page-break-inside: avoid;
-    }
-
-    img {
-        max-width: 100% !important;
-    }
-
-    p,
-    h2,
-    h3 {
-        orphans: 3;
-        widows: 3;
-    }
-
-    h2,
-    h3 {
-        page-break-after: avoid;
-    }
 }

@@ -104,7 +104,6 @@ def main():
 
 			# Grab by ID and sort by PT Sequence
 			curShape = shapes[shapes['shape_id'] == 36099].sort_index(by = 'shape_pt_sequence')[["shape_pt_lat","shape_pt_lon"]]
-      
 
 
 """
