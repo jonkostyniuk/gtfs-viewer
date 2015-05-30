@@ -64,6 +64,15 @@ html, body {
     background: #ffffff;
     padding: 0;
     margin: 0;
+    color: #ff0000;
+}
+#gmap h2 {
+    padding-left: 10px;
+    font-size: 0.9em;
+}
+#gmap p {
+    padding-left: 10px;
+    font-size: 0.8em;
 }
 
 #gtfs-data {
@@ -91,6 +100,26 @@ html, body {
     vertical-align: middle;
 }
 
+
+/* COMMON AND REUSED CLASSES */
+.list-menu {
+    overflow-y: scroll;
+    height:200px !important;
+    border: 1px solid #dddddd;
+}
+
+.list-item {
+    display: block;
+    width: 100%;
+    background: #ffffff;
+}
+.list-item:hover {
+    background: #D6D6FF;
+}
+.list-item:active {
+    background: #0000ff;
+    color: #000000;
+}
 
 /* MISCELLANEOUS FLOAT/CLEAR CLASSES */
 .fltrt {  /* this class can be used to float an element right in your page. The floated element must precede the element it should be next to on the page. */

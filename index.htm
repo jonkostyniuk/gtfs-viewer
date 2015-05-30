@@ -25,11 +25,15 @@
 
       <div class="row">
         <div class="col-md-3" id="sidebar">
-          <h2>Select Variables</h2>
+          <h2>Select Variables <span class="glyphicon glyphicon-question-sign" aria-hidden="true"></span></h2>
             <p>Agency:<br />
               <select class="form-control" id="agency">
                 <option value="NULL">[ Select Transit Service ]</option>
+                <option value="YRT">York Region Transit</option>
               </select>
+            </p>
+            <p>
+              <button class="btn btn-primary" id="select-agency">Select Agency</button>
             </p>
             <p>Route:<br />
               <select class="form-control" id="route" disabled>
@@ -43,7 +47,8 @@
             </p>
         </div>
         <div class="col-md-6" id="gmap">
-          Loading Map...
+          <h2>Map Not Loaded</h2>
+          <p>Please check internet connection!</p>
         </div>
         <div class="col-md-3" id="gtfs-data">
           <h2>Output Data Display</h2>
@@ -54,6 +59,35 @@
     <div id="footer">
         Jon Kostyniuk &copy; 2015, Build 001
     </div>
+
+
+    <!-- Modal HTML -->
+    <div id="mAgency" class="modal fade">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                    <h4 class="modal-title">Select Agency</h4>
+                </div>
+                <div class="modal-body">
+                    <p>Transit feeds from <a href="http://www.gtfs-data-exchange.com/" target="_blank">GTFS Exchange</a></p>
+                    <div class="list-menu" id="test-1">
+                      <div class="list-item" id="t1" onClick="listClick(this.id)">Junk</div>
+                      <div class="list-item" id="t2" onClick="listClick(this.id)">Junk</div>
+                      <div class="list-item" id="t3" onClick="listClick(this.id)">Junk</div>
+                      <div class="list-item" id="t4" onClick="listClick(this.id)">Junk</div>
+                      <div class="list-item" id="t5" onClick="listClick(this.id)">Junk</div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" id="clear-agency" onClick="clearAgency()">Cancel</button>
+                    <button type="button" class="btn btn-primary" id="load-agency" disabled=true>Load Agency</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
 
     <!-- JAVASCRIPT FILE REFERENCES -->
     <script src="js/jquery-1.11.2.min.js"></script>

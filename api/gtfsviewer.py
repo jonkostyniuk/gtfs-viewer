@@ -1,14 +1,14 @@
 # ##########################################################################################################
-# GOOGLE TRANSIT ROUTE EXTRACTOR
-# Created by Jon Kostyniuk on 09MAY2015
-# Last modified by Jon Kostyniuk on 09MAY2015
+# GTFS DATA EXTRACTOR
+# Created by Jon Kostyniuk on 28MAY2015
+# Last modified by Jon Kostyniuk on 28MAY2015
 # Property of JK Enterprises
 # v0.01a
 # ##########################################################################################################
 #
 # Version History:
 # ----------------
-# 09MAY2015 v0.01a - JK
+# 28MAY2015 v0.01a - JK
 #   - Initial Version.
 #
 # Usage:
@@ -23,6 +23,8 @@
 # ##########################################################################################################
 # MODULES AND DEFINITIONS
 # ##########################################################################################################
+
+#!/usr/bin/python
 
 # STANDARD MODULES
 # ----------------
@@ -52,12 +54,11 @@ XYZ = ""
 # -----------
 
 # SQLite Database Variables
-dbConn = None	# Data Base Connection - Initialize to None
+#dbConn = None
 
 # General Transit Feed Specification (GTFS) Variables
 #gtfsSource = "http://gtfs.winnipegtransit.com/google_transit.zip"	# GTFS Source File
 gtfsSource = "google_transit.zip"	# GTFS Source File
-var4 = ""		# Variable Description #4
 
 
 # ##########################################################################################################
@@ -72,19 +73,53 @@ var4 = ""		# Variable Description #4
 # MODULE FUNCTIONS
 # ----------------
 
-# n/a
+# Function to Get Agency
+def getAgency():
+
+
+
+  return 'Agency'
+
+# Function to Get Routes List
+def getRoutes():
+
+
+  return 'Routes'
 
 # HELPER (MONKEY) FUNCTIONS
 # -------------------------
 
-# n/a
+# Function to Extract GTFS ZIP to Temporary Folder
+def unzipGTFS(fileloc):
+  # Open ZIP Archive Location
+  zf = zipfile.ZipFile(gtfsSource)
+
+  # Loop through ZIP File Names
+  #for filename in zf.namelist():
+
+
+
+
 
 
 # ##########################################################################################################
 # MAIN PROGRAM
 # ##########################################################################################################
 
-# Function to handle Main Program
+# Function to handle Main Program (Not Used)
+#def main():
+#  return
+
+# Call Main Program (Not Used)
+#if __name__ == "__main__":
+#  main()
+
+
+
+
+
+
+"""
 def main():
 	# Open ZIP Archive Location
 	zf = zipfile.ZipFile(gtfsSource)
@@ -104,7 +139,7 @@ def main():
 
 			# Grab by ID and sort by PT Sequence
 			curShape = shapes[shapes['shape_id'] == 36099].sort_index(by = 'shape_pt_sequence')[["shape_pt_lat","shape_pt_lon"]]
-
+"""
 
 """
 try:
@@ -163,9 +198,6 @@ JSON--
 
 
 
-# Call Main Program
-if __name__ == "__main__":
-	main()
 
 
 # ##########################################################################################################
