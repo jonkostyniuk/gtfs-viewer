@@ -114,11 +114,11 @@ html, body {
     background: #ffffff;
 }
 .list-item:hover {
-    background: #D6D6FF;
+    background: #dddddd;
 }
 .list-item:active {
     background: #0000ff;
-    color: #000000;
+    color: #ffffff;
 }
 
 /* MISCELLANEOUS FLOAT/CLEAR CLASSES */
