@@ -51,6 +51,8 @@ function clearAgency() {
 	$('#load-agency').prop('disabled', true); // Disable submit button
 	$('#mAgency').modal('hide'); // Hide dialogue
 	$diaName = null; // Clear active dialogue name
+
+	return;
 }
 
 // Function to Initialize Google Map
@@ -61,6 +63,8 @@ function initMap() {
 	    center: new google.maps.LatLng(43.809785, -79.454099)
 		};
 	$map = new google.maps.Map($('#gmap')[0], $mapOptions);
+
+	return;
 }
 
 // Function to Load Agency
@@ -71,6 +75,8 @@ function loadAgency() {
 	$('#mAgency').modal('hide');
 	$diaName = null;
     alert($SelAgency);
+
+    return;
 }
 
 // Function to Load GTFS Exchange Data
@@ -82,11 +88,13 @@ function loadGTFS() {
 	    url: $GTFS_API,
 	    dataType: "jsonp",
 	    success: function($data) {
-	    	parseGTFS($data)
+	    	parseGTFS($data);
 	    	//$('#agency-data').html(JSON.stringify($data));  //WORKS
-	    	alert($data["status_code"]) //TEMP
+	    	//alert($data["status_code"]); //TEMP
 	    }
-	});	
+	});
+
+	return;
 }
 
 // Function to Handle List Clicks
@@ -107,6 +115,8 @@ function listClick($listID) {
 	// Add selected item style
 	$("#" + $listID).css("color", "#ffffff");
 	$("#" + $listID).css("background", "#0000ff");
+
+	return;
 }
 
 
@@ -116,11 +126,20 @@ function listClick($listID) {
 // Function to Parse GTFS Data
 function parseGTFS($gtfsjson) {
 	var $gtfsline = "";
-	//for(var $i = 0; $i < $gtfsjson["data"]; $i++) {
-	//	$gtfsline += "<div class='list-item' id='t1' onClick='listClick(this.id)''>Junk</div>"
-	//}
-	// START HERE
-	//<div class="list-item" id="t1" onClick="listClick(this.id)">Junk</div>
+	for(var $i = 0; $i < $gtfsjson["data"].length; $i++) {
+		// Check if official feed
+		if($gtfsjson["data"][$i]["is_official"] == true) {
+			$isOfficial = "<span class='glyphicon glyphicon-star' aria-hidden='true'></span>";
+		}
+		else {
+			$isOfficial = "<span class='glyphicon glyphicon-star-empty' aria-hidden='true'></span>";
+		}
+		// Construct GTFS List
+		$gtfsline += "<div class='list-item' id='" + $gtfsjson["data"][$i]["dataexchange_id"];
+		$gtfsline += "' onClick='listClick(this.id)'>" + $isOfficial + " " + $gtfsjson["data"][$i]["name"];
+		$gtfsline += "</div>";
+	}
+	return $("#agency-data").html($gtfsline);
 }
 
 
