@@ -85,12 +85,16 @@ tasks = [
 def get_routes():
     return gv.getRoutes()
 
+# Function to Get GTFS Exchange API Agencies
+@app.route(appPath + 'gtfs', methods=['GET'])
+def get_gtfs():
+    return gv.getGTFS()
 
 
+########### EXAMPLES TO BE DELETED
 @app.route(appPath + 'tasks', methods=['GET'])
 def get_tasks():
     return fl.jsonify({'tasks': tasks})
-
 @app.route(appPath + 'request', methods=['GET'])
 def get_request():
     return fl.request.args['x']

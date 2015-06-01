@@ -101,6 +101,13 @@ html, body {
 }
 
 
+/* MODAL ID ELEMENTS */
+/*#mAgency {
+    /*width: 80%;
+    margin-left: 40%;
+}*/
+
+
 /* COMMON AND REUSED CLASSES */
 .list-menu {
     overflow-y: scroll;

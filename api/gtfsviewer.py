@@ -32,6 +32,7 @@
 #import csv
 import pandas as pd
 import StringIO
+import requests
 import zipfile
 
 # CUSTOM MODULES
@@ -60,6 +61,9 @@ XYZ = ""
 #gtfsSource = "http://gtfs.winnipegtransit.com/google_transit.zip"	# GTFS Source File
 gtfsSource = "google_transit.zip"	# GTFS Source File
 
+# External API Links
+GTFS_API = "http://www.gtfs-data-exchange.com/api/agencies" # GTFS Exchange API Data
+
 
 # ##########################################################################################################
 # DEFINED CLASSES AND FUNCTIONS
@@ -79,6 +83,10 @@ def getAgency():
 
 
   return 'Agency'
+
+# Function to Get GTFS Exchange API Data
+def getGTFS():
+  return requests.get(GTFS_API).text
 
 # Function to Get Routes List
 def getRoutes():
