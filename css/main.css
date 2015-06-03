@@ -111,7 +111,7 @@ html, body {
 /* COMMON AND REUSED CLASSES */
 .list-menu {
     overflow-y: scroll;
-    height:200px !important;
+    height: 150px !important;
     border: 1px solid #dddddd;
 }
 

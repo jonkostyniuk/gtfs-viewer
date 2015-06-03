@@ -116,6 +116,20 @@ function listClick($listID) {
 	$("#" + $listID).css("color", "#ffffff");
 	$("#" + $listID).css("background", "#0000ff");
 
+	// Load Preview Data  START HERE!!!!
+	for(var $i = 0; $i < $AgencyData["data"].length; $i++) {
+		if($AgencyData["data"][$i]["dataexchange_id"] == $listID) {
+			var $curData = $AgencyData["data"][$i];
+		}
+	}
+	$("#aName").html($curData["name"])
+
+	//alert($curData["dataexchange_id"]);
+
+	//var d = new Date($AgencyData);
+
+	//date_last_updated   
+
 	return;
 }
 
@@ -125,14 +139,15 @@ function listClick($listID) {
 
 // Function to Parse GTFS Data
 function parseGTFS($gtfsjson) {
+	$AgencyData = $gtfsjson; // Save Active GTFS Global Object
 	var $gtfsline = "";
 	for(var $i = 0; $i < $gtfsjson["data"].length; $i++) {
 		// Check if official feed
 		if($gtfsjson["data"][$i]["is_official"] == true) {
-			$isOfficial = "<span class='glyphicon glyphicon-star' aria-hidden='true'></span>";
+			$isOfficial = "<span class='glyphicon glyphicon-star' aria-hidden='true' style='color:#cccc00'></span>";
 		}
 		else {
-			$isOfficial = "<span class='glyphicon glyphicon-star-empty' aria-hidden='true'></span>";
+			$isOfficial = "<span class='glyphicon glyphicon-star-empty' aria-hidden='true' style='color:#999999'></span>";
 		}
 		// Construct GTFS List
 		$gtfsline += "<div class='list-item' id='" + $gtfsjson["data"][$i]["dataexchange_id"];
