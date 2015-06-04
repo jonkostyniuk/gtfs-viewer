@@ -85,7 +85,7 @@ tasks = [
 def get_routes():
     return gv.getRoutes()
 
-# Function to Get GTFS Exchange API Agencies
+# Function to Get GTFS Exchange API Agencies [NOT CURRENTLY CONNECTED]
 @app.route(appPath + 'gtfs', methods=['GET'])
 def get_gtfs():
     return gv.getGTFS()

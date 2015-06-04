@@ -31,6 +31,7 @@ var $map = null;													// Google Map Variable
 var $AgencyData = null; 											// JSON Object for Agency Data
 var $SelAgency = null;												// Selected Transit Agency ID
 var $GTFS_API = "http://www.gtfs-data-exchange.com/api/agencies"	// GTFS Exchange API Data
+var $GTFS_ZIP = new RegExp(".zip$");								// GTFS ZIP File Regular Expression
 
 // GUI Variables
 var $diaName = null;												// Name of Dialogue Window Open
@@ -86,6 +87,7 @@ function loadGTFS() {
 
 	$.ajax({
 	    url: $GTFS_API,
+	    method: "GET",
 	    dataType: "jsonp",
 	    success: function($data) {
 	    	parseGTFS($data);
@@ -122,13 +124,16 @@ function listClick($listID) {
 			var $curData = $AgencyData["data"][$i];
 		}
 	}
-	$("#aName").html($curData["name"])
-
+	$("#aName").html($curData["name"]);
+	//location
+	$("#aURL").html("<a href='" + $curData["url"] + "' target='_blank'>" + $curData["url"] + "</a>");
+	$("#aFeed").html("<a href='" + $curData["feed_baseurl"] + "' target='_blank'>" + $curData["feed_baseurl"] + "</a>");
+	//status
+	$("#aFeedLastUpdated").html($curData["date_last_updated"]);
 	//alert($curData["dataexchange_id"]);
 
 	//var d = new Date($AgencyData);
-
-	//date_last_updated   
+ 
 
 	return;
 }
@@ -137,24 +142,44 @@ function listClick($listID) {
 // HELPER (MONKEY) FUNCTIONS
 // -------------------------
 
+// Function to Check if Agency Official
+function aIsOfficial($isOfficial) {
+	if($isOfficial == true) {
+		return "<span class='glyphicon glyphicon-star' aria-hidden='true' style='color:#cccc00'></span>";
+	}
+	else {
+		return "<span class='glyphicon glyphicon-star-empty' aria-hidden='true' style='color:#999999'></span>";
+	}	
+}
+
 // Function to Parse GTFS Data
 function parseGTFS($gtfsjson) {
 	$AgencyData = $gtfsjson; // Save Active GTFS Global Object
 	var $gtfsline = "";
+	var $aCount = 0;
 	for(var $i = 0; $i < $gtfsjson["data"].length; $i++) {
-		// Check if official feed
-		if($gtfsjson["data"][$i]["is_official"] == true) {
-			$isOfficial = "<span class='glyphicon glyphicon-star' aria-hidden='true' style='color:#cccc00'></span>";
+		// Verify Feed Link Present
+		//if($GTFS_ZIP.test($gtfsjson["data"][$i]["is_official"])) {
+		if($gtfsjson["data"][$i]["feed_baseurl"] != "") {
+			// Check if official feed
+			//$isOfficial = parseGTFS($gtfsjson["data"][$i]["is_official"])
+			if($gtfsjson["data"][$i]["is_official"] == true) {
+				$isOfficial = "<span class='glyphicon glyphicon-star' aria-hidden='true' style='color:#cccc00'></span>";
+			}
+			else {
+				$isOfficial = "<span class='glyphicon glyphicon-star-empty' aria-hidden='true' style='color:#999999'></span>";
+			}
+			// Construct GTFS List
+			$gtfsline += "<div class='list-item' id='" + $gtfsjson["data"][$i]["dataexchange_id"];
+			$gtfsline += "' onClick='listClick(this.id)'>" + $isOfficial + " " + $gtfsjson["data"][$i]["name"];
+			$gtfsline += "</div>";
+			$aCount++;
 		}
-		else {
-			$isOfficial = "<span class='glyphicon glyphicon-star-empty' aria-hidden='true' style='color:#999999'></span>";
-		}
-		// Construct GTFS List
-		$gtfsline += "<div class='list-item' id='" + $gtfsjson["data"][$i]["dataexchange_id"];
-		$gtfsline += "' onClick='listClick(this.id)'>" + $isOfficial + " " + $gtfsjson["data"][$i]["name"];
-		$gtfsline += "</div>";
 	}
-	return $("#agency-data").html($gtfsline);
+	// Output Results
+	$("#agency-data").html($gtfsline);
+	$("#aTotal").html("Total Agencies: " + $aCount);
+	return ;
 }
 
 
