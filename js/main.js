@@ -31,7 +31,7 @@ var $map = null;													// Google Map Variable
 var $AgencyData = null; 											// JSON Object for Agency Data
 var $SelAgency = null;												// Selected Transit Agency ID
 var $GTFS_API = "http://www.gtfs-data-exchange.com/api/agencies"	// GTFS Exchange API Data
-var $GTFS_ZIP = new RegExp(".zip$");								// GTFS ZIP File Regular Expression
+var $GTFS_ZIP = new RegExp(/\.(zip$)/);								// GTFS ZIP File Regular Expression
 
 // GUI Variables
 var $diaName = null;												// Name of Dialogue Window Open
@@ -118,18 +118,29 @@ function listClick($listID) {
 	$("#" + $listID).css("color", "#ffffff");
 	$("#" + $listID).css("background", "#0000ff");
 
-	// Load Preview Data  START HERE!!!!
+	// Load Preview Data
 	for(var $i = 0; $i < $AgencyData["data"].length; $i++) {
 		if($AgencyData["data"][$i]["dataexchange_id"] == $listID) {
 			var $curData = $AgencyData["data"][$i];
 		}
 	}
+	// Construct Location Data
+	var $locInfo = "";
+	//if($curData["area"] != "") $locInfo += $curData["name"] + ", ";
+	if($curData["state"] != "") $locInfo += $curData["state"] + ", ";
+	if($curData["country"] != "") $locInfo += $curData["country"];
+
+	// Construct Date and Time
+	var $datetime = new Date(parseInt($curData["date_last_updated"]))
+
+	// Change Agency Dialogue Preview Values
 	$("#aName").html($curData["name"]);
-	//location
+	$("#aLocation").html($locInfo);
 	$("#aURL").html("<a href='" + $curData["url"] + "' target='_blank'>" + $curData["url"] + "</a>");
 	$("#aFeed").html("<a href='" + $curData["feed_baseurl"] + "' target='_blank'>" + $curData["feed_baseurl"] + "</a>");
 	//status
-	$("#aFeedLastUpdated").html($curData["date_last_updated"]);
+	$("#aFeedLastUpdated").html($datetime.toUTCString());
+	//$("#aFeedLastUpdated").html($GTFS_ZIP.test($curData["feed_baseurl"]).toString()); //regex test
 	//alert($curData["dataexchange_id"]);
 
 	//var d = new Date($AgencyData);
@@ -159,8 +170,8 @@ function parseGTFS($gtfsjson) {
 	var $aCount = 0;
 	for(var $i = 0; $i < $gtfsjson["data"].length; $i++) {
 		// Verify Feed Link Present
-		//if($GTFS_ZIP.test($gtfsjson["data"][$i]["is_official"])) {
-		if($gtfsjson["data"][$i]["feed_baseurl"] != "") {
+		if($GTFS_ZIP.test($gtfsjson["data"][$i]["feed_baseurl"])) {
+		//if($gtfsjson["data"][$i]["feed_baseurl"] != "") {
 			// Check if official feed
 			//$isOfficial = parseGTFS($gtfsjson["data"][$i]["is_official"])
 			if($gtfsjson["data"][$i]["is_official"] == true) {
