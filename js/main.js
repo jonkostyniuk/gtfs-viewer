@@ -124,14 +124,17 @@ function listClick($listID) {
 			var $curData = $AgencyData["data"][$i];
 		}
 	}
+
 	// Construct Location Data
 	var $locInfo = "";
-	//if($curData["area"] != "") $locInfo += $curData["name"] + ", ";
 	if($curData["state"] != "") $locInfo += $curData["state"] + ", ";
 	if($curData["country"] != "") $locInfo += $curData["country"];
 
 	// Construct Date and Time
-	var $datetime = new Date(parseInt($curData["date_last_updated"]))
+	var $datetime = new Date($curData["date_last_updated"] * 1000);
+	//$dtStr = $datetime.format("dd.mm.yyyy hh:MM:ss");
+	//$datetime.setSeconds(parseInt($curData["date_last_updated"]));
+	//$datetime.setSeconds($curData["date_last_updated"]);
 
 	// Change Agency Dialogue Preview Values
 	$("#aName").html($curData["name"]);
@@ -139,12 +142,7 @@ function listClick($listID) {
 	$("#aURL").html("<a href='" + $curData["url"] + "' target='_blank'>" + $curData["url"] + "</a>");
 	$("#aFeed").html("<a href='" + $curData["feed_baseurl"] + "' target='_blank'>" + $curData["feed_baseurl"] + "</a>");
 	//status
-	$("#aFeedLastUpdated").html($datetime.toUTCString());
-	//$("#aFeedLastUpdated").html($GTFS_ZIP.test($curData["feed_baseurl"]).toString()); //regex test
-	//alert($curData["dataexchange_id"]);
-
-	//var d = new Date($AgencyData);
- 
+	$("#aFeedLastUpdated").html($datetime);
 
 	return;
 }
@@ -170,16 +168,16 @@ function parseGTFS($gtfsjson) {
 	var $aCount = 0;
 	for(var $i = 0; $i < $gtfsjson["data"].length; $i++) {
 		// Verify Feed Link Present
-		if($GTFS_ZIP.test($gtfsjson["data"][$i]["feed_baseurl"])) {
+		if($GTFS_ZIP.test($gtfsjson["data"][$i]["feed_baseurl"])) { // Test whether feed contains '.zip' extension
 		//if($gtfsjson["data"][$i]["feed_baseurl"] != "") {
 			// Check if official feed
-			//$isOfficial = parseGTFS($gtfsjson["data"][$i]["is_official"])
-			if($gtfsjson["data"][$i]["is_official"] == true) {
+			$isOfficial = aIsOfficial($gtfsjson["data"][$i]["is_official"])
+			/*if($gtfsjson["data"][$i]["is_official"] == true) {
 				$isOfficial = "<span class='glyphicon glyphicon-star' aria-hidden='true' style='color:#cccc00'></span>";
 			}
 			else {
 				$isOfficial = "<span class='glyphicon glyphicon-star-empty' aria-hidden='true' style='color:#999999'></span>";
-			}
+			}*/
 			// Construct GTFS List
 			$gtfsline += "<div class='list-item' id='" + $gtfsjson["data"][$i]["dataexchange_id"];
 			$gtfsline += "' onClick='listClick(this.id)'>" + $isOfficial + " " + $gtfsjson["data"][$i]["name"];

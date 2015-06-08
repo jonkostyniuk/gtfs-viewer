@@ -1,22 +1,96 @@
-import os
-from datetime import datetime
-from flask import Flask, request, flash, url_for, redirect, \
-     render_template, abort, send_from_directory
+# ##########################################################################################################
+# GTFS FLASK API APPLICATION
+# Created by Jon Kostyniuk on 07JUN2015
+# Last modified by Jon Kostyniuk on 07JUN2015
+# Property of JK Enterprises
+# v0.01a
+# ##########################################################################################################
+#
+# Version History:
+# ----------------
+# 07JUN2015 v0.01a - JK
+#   - Initial Version.
+#
+# Usage:
+# ------
+# This script is used to direct website traffic and calls from reference URLs to required resource files.
+#
+# Instructions:
+# -------------
+# None. This script is referenced by 'app.py' when the application is initialized.
+#
 
-app = Flask(__name__)
-app.config.from_pyfile('flaskapp.cfg')
+# ##########################################################################################################
+# MODULES AND DEFINITIONS
+# ##########################################################################################################
 
+# STANDARD MODULES
+# ----------------
+import flask as fl
+import os #USED??
+from datetime import datetime #USED??
+#from flask import Flask, request, flash, url_for, redirect, render_template, abort, send_from_directory
+
+# CUSTOM MODULES
+# --------------
+
+import gtfsviewer as gv
+
+# GLOBAL CONSTANT VARIABLES
+# -------------------------
+
+# Initialize
+# n/a
+
+# Define
+# n/a
+
+# DEFINITIONS
+# -----------
+
+# Flask Initialize Variables
+app = fl.Flask(__name__)            	# Define Application Object
+app.config.from_pyfile('flaskapp.cfg')	# Configure Application Object
+
+# Reference Path Variables
+#appPath = '/gtfs-viewer/api/v0.1/'  	# Define Application Path
+
+
+# ##########################################################################################################
+# DEFINED CLASSES AND FUNCTIONS
+# ##########################################################################################################
+
+# API CALL FUNCTIONS
+# ------------------
+
+# Function to Query Test API
+@app.route("/api/test")
+def test():
+    return "<strong>The test API works!!</strong>"
+
+# URL REFERENCE FUNCTIONS
+# -----------------------
+
+# Function to Route Index Page
 @app.route('/')
 def index():
-    return render_template('index.html')
+    return fl.render_template('index.html')
 
+# Function to Route Static Resources
 @app.route('/<path:resource>')
 def serveStaticResource(resource):
-    return send_from_directory('static/', resource)
+    return fl.send_from_directory('static/', resource)
 
-@app.route("/test")
-def test():
-    return "<strong>It's Alive!</strong>"
 
+# ##########################################################################################################
+# MAIN PROGRAM
+# ##########################################################################################################
+
+# Run Application
 if __name__ == '__main__':
     app.run()
+
+
+# ##########################################################################################################
+# END OF SCRIPT
+# ##########################################################################################################

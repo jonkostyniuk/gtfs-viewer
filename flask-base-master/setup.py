@@ -1,10 +1,10 @@
 from setuptools import setup
 
-setup(name='FlaskApp',
-      version='1.0',
-      description='A basic Flask app with static files',
-      author='Ryan Jarvinen',
-      author_email='ryanj@redhat.com',
-      url='http://www.python.org/sigs/distutils-sig/',
-     install_requires=['Flask>=0.10.1'],
-     )
+setup(name='GTFS Viewer',
+	version='0.1a',
+	description='A GTFS viewer to display transit route data in a web browser.',
+	author='Jon Kostyniuk',
+	author_email='jon.kostyniuk@gmail.com',
+	url='http://gtfsviewer-jonkostyniuk.rhcloud.com/',
+	install_requires=['Flask>=0.10.1'],
+	)

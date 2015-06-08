@@ -13,8 +13,8 @@
     <title>GTFS Transit Route Viewer - Build 001</title>
 
     <!-- STYLESHEET FILE REFERENCES -->
-    <link href="css/bootstrap-3.3.4.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="css/main.css" />
+    <link href="css/bootstrap-3.3.4.min.css" rel="stylesheet" />
+    <link href="css/main.css" rel="stylesheet" />
   </head>
   <body>
     <div class="container-fluid">
@@ -25,22 +25,23 @@
 
       <div class="row">
         <div class="col-md-3" id="sidebar">
-          <h2>Select Variables <span class="glyphicon glyphicon-question-sign" aria-hidden="true"></span></h2>
-            <p>Agency:<br />
+          <h2>Select Variables</h2>
+            <p>Agency: <span class="glyphicon glyphicon-question-sign" aria-hidden="true"></span><br />
               <select class="form-control" id="agency">
-                <option value="NULL">[ Select Transit Service ]</option>
+                <option value="NULL">[ Select Preloaded GTFS ]</option>
                 <option value="YRT">York Region Transit</option>
               </select>
             </p>
             <p>
-              <button class="btn btn-primary" id="select-agency">Select Agency</button>
+              <button class="btn btn-primary" id="select-agency">Select Feed</button>
+              <button class="btn btn-primary" id="upload-gtfs">Upload GTFS</button>
             </p>
-            <p>Route:<br />
+            <p>Route: <span class="glyphicon glyphicon-question-sign" aria-hidden="true"></span><br />
               <select class="form-control" id="route" disabled>
                 <option value="NULL">[ Select Route ]</option>
               </select>
             </p>
-            <p>Trip:<br />
+            <p>Trip: <span class="glyphicon glyphicon-question-sign" aria-hidden="true"></span><br />
               <select class="form-control" id="trip" disabled>
                 <option value="NULL">[ Select Trip ID ]</option>
               </select>
@@ -61,19 +62,21 @@
     </div>
 
 
-    <!-- Modal HTML -->
+    <!-- Modal Dialogue HTML -->
     <div id="mAgency" class="modal fade">
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
                     <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-                    <h4 class="modal-title">Select Agency</h4>
+                    <h4 class="modal-title">Select Agency Feed</h4>
                 </div>
                 <div class="modal-body">
                     <p>Transit feeds from <a href="http://www.gtfs-data-exchange.com/" target="_blank">GTFS Exchange</a></p>
                     <div class="list-menu" id="agency-data">
+                      <!-- Automatically populated from GTFS Exchange Transit Feed JSON -->
                       <!-- Example: <div class="list-item" id="t1" onClick="listClick(this.id)">Junk</div> -->
                     </div>
+                    <!-- OnClick, automatically update agency preview information -->
                     <div><span id="aTotal" style="color: #ff0000">Total Agencies: --</span></div>
                     <div>Agency Name: <span id="aName" style="color: #999999">--</span></div>
                     <div>Location: <span id="aLocation" style="color: #999999">--</span></div>
@@ -89,8 +92,6 @@
             </div>
         </div>
     </div>
-
-
 
     <!-- JAVASCRIPT FILE REFERENCES -->
     <script src="js/jquery-1.11.2.min.js"></script>
