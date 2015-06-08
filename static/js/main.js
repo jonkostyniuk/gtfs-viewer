@@ -133,15 +133,17 @@ function listClick($listID) {
 	// Construct Date and Time
 	var $datetime = new Date($curData["date_last_updated"] * 1000);
 	//$dtStr = $datetime.format("dd.mm.yyyy hh:MM:ss");
-	//$datetime.setSeconds(parseInt($curData["date_last_updated"]));
-	//$datetime.setSeconds($curData["date_last_updated"]);
+
+	// Construct Official Feed or Not
+	var $aOfficial = "Unofficial";
+	if($curData["is_official"] == true) $aOfficial = "Official";	
 
 	// Change Agency Dialogue Preview Values
 	$("#aName").html($curData["name"]);
 	$("#aLocation").html($locInfo);
 	$("#aURL").html("<a href='" + $curData["url"] + "' target='_blank'>" + $curData["url"] + "</a>");
 	$("#aFeed").html("<a href='" + $curData["feed_baseurl"] + "' target='_blank'>" + $curData["feed_baseurl"] + "</a>");
-	//status
+	$("#aOfficial").html($aOfficial);
 	$("#aFeedLastUpdated").html($datetime);
 
 	return;
@@ -169,15 +171,8 @@ function parseGTFS($gtfsjson) {
 	for(var $i = 0; $i < $gtfsjson["data"].length; $i++) {
 		// Verify Feed Link Present
 		if($GTFS_ZIP.test($gtfsjson["data"][$i]["feed_baseurl"])) { // Test whether feed contains '.zip' extension
-		//if($gtfsjson["data"][$i]["feed_baseurl"] != "") {
 			// Check if official feed
 			$isOfficial = aIsOfficial($gtfsjson["data"][$i]["is_official"])
-			/*if($gtfsjson["data"][$i]["is_official"] == true) {
-				$isOfficial = "<span class='glyphicon glyphicon-star' aria-hidden='true' style='color:#cccc00'></span>";
-			}
-			else {
-				$isOfficial = "<span class='glyphicon glyphicon-star-empty' aria-hidden='true' style='color:#999999'></span>";
-			}*/
 			// Construct GTFS List
 			$gtfsline += "<div class='list-item' id='" + $gtfsjson["data"][$i]["dataexchange_id"];
 			$gtfsline += "' onClick='listClick(this.id)'>" + $isOfficial + " " + $gtfsjson["data"][$i]["name"];
@@ -211,3 +206,8 @@ $(document).ready(function() {
 
 // Initialize Google Maps DOM on Page Load
 google.maps.event.addDomListener(window, 'load', initMap());
+
+
+// ##########################################################################################################
+// END OF SCRIPT
+// ##########################################################################################################
