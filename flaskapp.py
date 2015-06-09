@@ -27,8 +27,8 @@
 # STANDARD MODULES
 # ----------------
 import flask as fl
-import os #USED??
-from datetime import datetime #USED??
+#import os #USED??
+#from datetime import datetime #USED??
 #from flask import Flask, request, flash, url_for, redirect, render_template, abort, send_from_directory
 
 # CUSTOM MODULES
@@ -50,7 +50,7 @@ import gtfsviewer as gv
 
 # Flask Initialize Variables
 app = fl.Flask(__name__)            	# Define Application Object
-app.config.from_pyfile('flaskapp.cfg')	# Configure Application Object
+app.config.from_pyfile("flaskapp.cfg")	# Configure Application Object
 
 # Reference Path Variables
 #appPath = '/gtfs-viewer/api/v0.1/'  	# Define Application Path
@@ -64,22 +64,27 @@ app.config.from_pyfile('flaskapp.cfg')	# Configure Application Object
 # ------------------
 
 # Function to Query Test API
+@app.route("/api/gtfs")
+def apiGTFS():
+    return gv.getGTFS()
+
+# Function to Query Test API
 @app.route("/api/test")
-def test():
+def apiTest():
     return "<strong>The test API works!!</strong>"
 
 # URL REFERENCE FUNCTIONS
 # -----------------------
 
 # Function to Route Index Page
-@app.route('/')
+@app.route("/")
 def index():
-    return fl.render_template('index.html')
+    return fl.render_template("index.html")
 
 # Function to Route Static Resources
-@app.route('/<path:resource>')
+@app.route("/<path:resource>")
 def serveStaticResource(resource):
-    return fl.send_from_directory('static/', resource)
+    return fl.send_from_directory("static/", resource)
 
 
 # ##########################################################################################################
@@ -87,7 +92,7 @@ def serveStaticResource(resource):
 # ##########################################################################################################
 
 # Run Application
-if __name__ == '__main__':
+if __name__ == "__main__":
     app.run()
 
 

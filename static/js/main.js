@@ -202,6 +202,9 @@ $(document).ready(function() {
 	$('#select-agency').on('click', function (e) {
 		loadGTFS();
 	});
+
+	// Event Handler for Popovers
+	$('[data-toggle="popover"]').popover();
 });
 
 // Initialize Google Maps DOM on Page Load
