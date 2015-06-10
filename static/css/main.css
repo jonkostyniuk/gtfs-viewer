@@ -101,10 +101,23 @@ html, body {
 }
 
 
-/* MODAL ID ELEMENTS */
+/* MODAL ELEMENTS */
 /*#mAgency {
     width: 80%;
     margin-left: 40%;
+}*/
+.modal-body {
+    font-size: 0.8em;
+}
+.modal-body p {
+    color: #666666;
+}
+/*
+#droparea{
+    min-height: 100px;
+    margin: 30px auto 0;
+    padding: 0 20px;
+    border: 2px dotted rgba(0, 82, 156, 0.8);
 }*/
 
 

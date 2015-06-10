@@ -56,12 +56,21 @@ function clearAgency() {
 	return;
 }
 
+// Function to Clear Upload
+function clearUpload() {
+	$('#load-ZIP').prop('disabled', true); // Disable submit button
+	$('#mUploadZIP').modal('hide'); // Hide dialogue
+	$diaName = null; // Clear active dialogue name
+
+	return;
+}
+
 // Function to Initialize Google Map
 function initMap() {
 	// Create New Google Maps Object
 	var $mapOptions = {
-	    zoom: 12,
-	    center: new google.maps.LatLng(43.809785, -79.454099)
+	    zoom: 5,
+	    center: new google.maps.LatLng(49.176623, -97.962114)
 		};
 	$map = new google.maps.Map($('#gmap')[0], $mapOptions);
 
@@ -91,10 +100,16 @@ function loadGTFS() {
 	    dataType: "jsonp",
 	    success: function($data) {
 	    	parseGTFS($data);
-	    	//$('#agency-data').html(JSON.stringify($data));  //WORKS
-	    	//alert($data["status_code"]); //TEMP
 	    }
 	});
+
+	return;
+}
+
+// Function to Upload GTFS ZIP File
+function loadZIP() {
+    $("#mUploadZIP").modal("show"); // Load dialogue window
+    $diaName = "Upload"; // Set active dialogue name
 
 	return;
 }
@@ -194,17 +209,64 @@ function parseGTFS($gtfsjson) {
 // When HTML Document Loaded, Add Listeners Here
 $(document).ready(function() {
 	// Event Handler to Load Selected Agency on Click
-	$('#load-agency').on('click', function (e) {
+	$("#load-agency").on("click", function (e) {
 		loadAgency();
 	});
 
 	// Event Handler to Select Agency on Click
-	$('#select-agency').on('click', function (e) {
+	$("#select-agency").on("click", function (e) {
 		loadGTFS();
 	});
 
+	// Event Handler to Select Agency on Click
+	$("#upload-gtfs").on("click", function (e) {
+		loadZIP();
+	});
+
 	// Event Handler for Popovers
-	$('[data-toggle="popover"]').popover();
+	$("[data-toggle='popover']").popover();
+
+
+	/* START HERE!!!!!!!
+	var myDropzone = new Dropzone("#droparea", {
+		url: "/upload",
+		method: "POST", // can be changed to "put" if necessary
+		maxFilesize: 2, // in MB
+		paramName: "file", // The name that will be used to transfer the file
+		uploadMultiple: false, // This option will also trigger additional events (like processingmultiple).
+		headers: {
+	  		"My-Awesome-Header": "header value"
+		},
+		addRemoveLinks: true, // add an <a class="dz-remove">Remove file</a> element to the file preview that will remove the file, and it will change to Cancel upload
+		previewsContainer: "#previewsContainer",
+		clickable: "#selectImage",
+		createImageThumbnails: true,
+		maxThumbnailFilesize: 2, // in MB
+		thumbnailWidth: 300,
+		thumbnailHeight: 300,
+		maxFiles: 3,
+		acceptedFiles: "application/zip", //This is a comma separated list of mime types or file extensions
+		autoProcessQueue: false, // When set to false you have to call myDropzone.processQueue() yourself in order to upload the dropped files. 
+		forceFallback: false,
+
+		init: function() {
+	  		console.log("init");
+		},
+		resize: function(file) {
+	  		console.log("resize");
+		   //Crop rectangle range
+		   //Those values are going to be used by ctx.drawImage()
+	  		return {"srcX":0, "srcY":0, "srcWidth":300, "srcHeight":300}
+		},
+		accept: function(file, done) {
+	  		console.log("accept");
+	  		done();
+		},
+		fallback: function() {
+	  		console.log("fallback");
+		}
+	});*/
+
 });
 
 // Initialize Google Maps DOM on Page Load

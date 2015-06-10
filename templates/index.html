@@ -10,7 +10,7 @@
     <meta name="keywords" content="Don't forget to add 20-30 important keywords here." />
 
     <!-- PAGE TITLE -->
-    <title>GTFS Transit Route Viewer - Build 001</title>
+    <title>GTFS Transit Route Viewer</title>
 
     <!-- STYLESHEET FILE REFERENCES -->
     <link href="css/bootstrap-3.3.4.min.css" rel="stylesheet" />
@@ -26,7 +26,7 @@
       <div class="row">
         <div class="col-md-3" id="sidebar">
           <h2>Select Variables</h2>
-            <p>Agency: <a tabindex="0" role="button" data-toggle="popover" data-trigger="focus" title="Dismissible popover" data-content="And here's some amazing content. It's very engaging. Right?"><span class="glyphicon glyphicon-question-sign" aria-hidden="true"></span></a><br />
+            <p>Agency: <a tabindex="0" role="button" data-toggle="popover" data-trigger="focus" data-placement="bottom" data-content="Select an agency GTFS transit feed from the GTFS Exchange, external reference ZIP link, upload ZIP file, or preloaded agencies previously selected. Preloaded agencies on this machine in this browser will expire after 24 hours of non-use."><span class="glyphicon glyphicon-question-sign" aria-hidden="true"></span></a><br />
               <select class="form-control" id="agency">
                 <option value="NULL">[ Select Preloaded GTFS ]</option>
                 <option value="YRT">York Region Transit</option>
@@ -62,16 +62,16 @@
     </div>
 
 
-    <!-- Modal Dialogue HTML -->
-    <div id="mAgency" class="modal fade">
+    <!-- Modal Dialogue HTML - GTFS Agency Feed Select -->
+    <div id="mAgency" class="modal fade" role="dialog" data-backdrop="static" data-keyboard="false" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
-                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                    <!--<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>-->
                     <h4 class="modal-title">Select Agency Feed</h4>
                 </div>
                 <div class="modal-body">
-                    <p>Transit feeds from <a href="http://www.gtfs-data-exchange.com/" target="_blank">GTFS Exchange</a></p>
+                    <p>Transit feeds from <a href="http://www.gtfs-data-exchange.com/" target="_blank">GTFS Exchange</a>:</p>
                     <div class="list-menu" id="agency-data">
                       <!-- Automatically populated from GTFS Exchange Transit Feed JSON -->
                       <!-- Example: <div class="list-item" id="t1" onClick="listClick(this.id)">Junk</div> -->
@@ -84,10 +84,39 @@
                     <div>Feed URL: <span id="aFeed" style="color: #999999">--</span></div>
                     <div>Status: <span id="aOfficial" style="color: #999999">--</span></div>
                     <div>Feed Updated: <span id="aFeedLastUpdated" style="color: #999999">--</span></div>
+                    <p>Preloaded agencies expire after 24 hours and are not shared with other users.</p>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-default" id="clear-agency" onClick="clearAgency()">Cancel</button>
                     <button type="button" class="btn btn-primary" id="load-agency" disabled=true>Load Agency</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Dialogue HTML - GTFS ZIP File Upload -->
+    <div id="mUploadZIP" class="modal fade" data-backdrop="static" data-keyboard="false" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title">Upload GTFS ZIP File</h4>
+                </div>
+                <div class="modal-body">
+                    <p>Upload a GTFS ZIP file via web URL reference or upload via dropzone below.</p>
+                    <div class="form-group">
+                      <label for="zipurl">Paste ZIP File URL Here:</label>
+                      <input type="url" class="form-control" id="zipurl" placeholder="e.g. http://mytransit.com/gtfs_data.zip">
+                    </div>
+                    <div class="form-group">
+                      <label for="droparea">Drop Local ZIP File Here:</label>
+                      <input type="text" class="form-control" id="droparea" placeholder="e.g. gtfs_data.zip">
+                      <!--<div id="droparea">Drop ZIP File Here</div>-->
+                    </div>
+                    <p>Preloaded agencies expire after 24 hours and are not shared with other users.</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" id="clear-upload" onClick="clearUpload()">Cancel</button>
+                    <button type="button" class="btn btn-primary" id="load-ZIP" disabled=true>Load ZIP</button>
                 </div>
             </div>
         </div>
