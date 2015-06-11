@@ -98,26 +98,29 @@
     <div id="mUploadZIP" class="modal fade" data-backdrop="static" data-keyboard="false" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
-                <div class="modal-header">
-                    <h4 class="modal-title">Upload GTFS ZIP File</h4>
-                </div>
-                <div class="modal-body">
-                    <p>Upload a GTFS ZIP file via web URL reference or upload via dropzone below.</p>
-                    <div class="form-group">
-                      <label for="zipurl">Paste ZIP File URL Here:</label>
-                      <input type="url" class="form-control" id="zipurl" placeholder="e.g. http://mytransit.com/gtfs_data.zip">
-                    </div>
-                    <div class="form-group">
-                      <label for="droparea">Drop Local ZIP File Here:</label>
-                      <input type="text" class="form-control" id="droparea" placeholder="e.g. gtfs_data.zip">
-                      <!--<div id="droparea">Drop ZIP File Here</div>-->
-                    </div>
-                    <p>Preloaded agencies expire after 24 hours and are not shared with other users.</p>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-default" id="clear-upload" onClick="clearUpload()">Cancel</button>
-                    <button type="button" class="btn btn-primary" id="load-ZIP" disabled=true>Load ZIP</button>
-                </div>
+                <form id="zipform">                
+                  <div class="modal-header">
+                      <h4 class="modal-title">Upload GTFS ZIP File</h4>
+                  </div>
+                  <div class="modal-body">
+                      <p>Upload a GTFS ZIP file via web URL reference or upload via dropzone below.</p>
+                      <div class="form-group">
+                        <label for="zipurl">Paste ZIP File URL Here:</label>
+                        <input type="url" class="form-control" id="zipurl" placeholder="e.g. http://mytransit.com/gtfs_data.zip">
+                      </div>
+                      <div class="form-group">
+                        <label for="zipfile">Select Local ZIP File Here:</label>
+                        <input type="file" id="zipfile">
+                        <p class="help-block">e.g. gtfs_data.zip</p>
+                      </div>
+                      <p>Preloaded agencies expire after 24 hours and are not shared with other users.</p>
+                  </div>
+
+                  <div class="modal-footer">
+                      <button type="reset" class="btn btn-default" id="clear-upload" onClick="clearUpload()">Cancel</button>
+                      <button type="submit" class="btn btn-primary" id="load-ZIP" disabled=true>Load ZIP</button>
+                  </div>
+                </form>             
             </div>
         </div>
     </div>
@@ -125,8 +128,8 @@
     <!-- JAVASCRIPT FILE REFERENCES -->
     <script src="js/jquery-1.11.2.min.js"></script>
     <script src="js/bootstrap-3.3.4.min.js"></script>
-    <script src="js/dropzone-4.0.0.min.js"></script>
     <script src="https://maps.googleapis.com/maps/api/js?v=3.exp"></script>
+    <script src="js/jquery.validate-1.13.1.min.js"></script>
     <script src="js/main.js"></script>
 
     <!-- GOOGLE ANALYTICS SCRIPT: change UA-XXXXX-X to be your site's ID. -->

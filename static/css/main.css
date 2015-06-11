@@ -142,14 +142,23 @@ html, body {
 }
 
 /* MISCELLANEOUS FLOAT/CLEAR CLASSES */
+.error { /* this calss represents error text */
+    color: #ff0000;
+}
+.error.valid { /* this calss represents error text */
+    color: #006400;
+}
+
 .fltrt {  /* this class can be used to float an element right in your page. The floated element must precede the element it should be next to on the page. */
     float: right;
     margin-left: 8px;
 }
+
 .fltlft { /* this class can be used to float an element left in your page. The floated element must precede the element it should be next to on the page. */
     float: left;
     margin-right: 8px;
 }
+
 .clearfloat { /* this class can be placed on a <br /> or empty div as the final element following the last floated div (within the #container) if the #footer is removed or taken out of the #container */
     clear:both;
     height:0;

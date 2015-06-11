@@ -226,47 +226,27 @@ $(document).ready(function() {
 	// Event Handler for Popovers
 	$("[data-toggle='popover']").popover();
 
-
-	/* START HERE!!!!!!!
-	var myDropzone = new Dropzone("#droparea", {
-		url: "/upload",
-		method: "POST", // can be changed to "put" if necessary
-		maxFilesize: 2, // in MB
-		paramName: "file", // The name that will be used to transfer the file
-		uploadMultiple: false, // This option will also trigger additional events (like processingmultiple).
-		headers: {
-	  		"My-Awesome-Header": "header value"
-		},
-		addRemoveLinks: true, // add an <a class="dz-remove">Remove file</a> element to the file preview that will remove the file, and it will change to Cancel upload
-		previewsContainer: "#previewsContainer",
-		clickable: "#selectImage",
-		createImageThumbnails: true,
-		maxThumbnailFilesize: 2, // in MB
-		thumbnailWidth: 300,
-		thumbnailHeight: 300,
-		maxFiles: 3,
-		acceptedFiles: "application/zip", //This is a comma separated list of mime types or file extensions
-		autoProcessQueue: false, // When set to false you have to call myDropzone.processQueue() yourself in order to upload the dropped files. 
-		forceFallback: false,
-
-		init: function() {
-	  		console.log("init");
-		},
-		resize: function(file) {
-	  		console.log("resize");
-		   //Crop rectangle range
-		   //Those values are going to be used by ctx.drawImage()
-	  		return {"srcX":0, "srcY":0, "srcWidth":300, "srcHeight":300}
-		},
-		accept: function(file, done) {
-	  		console.log("accept");
-	  		done();
-		},
-		fallback: function() {
-	  		console.log("fallback");
-		}
-	});*/
-
+	// ZIP File Form Validator
+	$('#zipform').validate({
+	        rules: {
+	            zipurl: {
+	                //regex: /(http(s?):)|([/|.|\w|\s])*\.(?:zip)/,
+	                regex: /(http(s?):)|([/|.|\w|\s])*\.(zip)/,
+	                required: "#zipfile:blank"
+	            },
+	            zipfile: {
+	                minlength: 2,
+	                required: "#zipurl:blank"
+	            }
+	        },
+	        highlight: function (element) {
+	            $(element).closest('.control-group').removeClass('success').addClass('error');
+	        },
+	        success: function (element) {
+	            element.text('OK!').addClass('valid')
+	                .closest('.control-group').removeClass('error').addClass('success');
+	        }
+	    });
 });
 
 // Initialize Google Maps DOM on Page Load
