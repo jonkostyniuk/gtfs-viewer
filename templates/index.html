@@ -33,8 +33,8 @@
               </select>
             </p>
             <p>
-              <button class="btn btn-primary" id="select-agency">Select Feed</button>
-              <button class="btn btn-primary" id="upload-gtfs">Upload GTFS</button>
+              <button class="btn btn-primary" id="select-feed">Select Feed</button>
+              <button class="btn btn-primary" id="select-zip">Upload GTFS</button>
             </p>
             <p>Route: <span class="glyphicon glyphicon-question-sign" aria-hidden="true"></span><br />
               <select class="form-control" id="route" disabled>
@@ -118,7 +118,7 @@
                       <p>Preloaded agencies expire after 24 hours and are not shared with other users.</p>
                   </div>
                   <div class="modal-footer">
-                      <button type="reset" class="btn btn-default" id="clear-upload" onClick="clearUpload()">Cancel</button>
+                      <button type="reset" class="btn btn-default" id="upload-clear" onClick="clearUpload()">Cancel</button>
                       <button type="button" class="btn btn-primary" id="upload-ZIP" disabled=true>Load ZIP</button>
                   </div>
                 </form>             

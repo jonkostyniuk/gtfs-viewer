@@ -32,6 +32,7 @@ var $AgencyData = null; 											// JSON Object for Agency Data
 var $SelAgency = null;												// Selected Transit Agency ID
 var $GTFS_API = "http://www.gtfs-data-exchange.com/api/agencies"	// GTFS Exchange API Data
 var $GTFS_ZIP = new RegExp(/\.(zip$)/);								// GTFS ZIP File Regular Expression
+var $ZipType = null;												// ZIP Radio - URL or File
 
 // GUI Variables
 var $diaName = null;												// Name of Dialogue Window Open
@@ -84,39 +85,11 @@ function loadAgency() {
 	$('#load-agency').prop('disabled', true);
 	$('#mAgency').modal('hide');
 	$diaName = null;
-    alert($SelAgency);
-
-    return;
-}
-
-// Function to Load GTFS Exchange Data
-function loadGTFS() {
-    $("#mAgency").modal('show'); // Load dialogue window
-    $diaName = "Agency"; // Set active dialogue name
-
-	$.ajax({
-	    url: $GTFS_API,
-	    method: "GET",
-	    dataType: "jsonp",
-	    success: function($data) {
-	    	parseGTFS($data);
-	    }
-	});
-
-	return;
-}
-
-// Function to Upload GTFS ZIP File
-function loadZIP() {
-    $("#mUploadZIP").modal("show"); // Load dialogue window
-    $diaName = "Upload"; // Set active dialogue name
-    $('#zipurl').prop('disabled', true); // Disable field until radio checked
-    $('#zipfile').prop('disabled', true); // Disable field until radio checked 
     
 
-    $('#upload-ZIP').prop('disabled', false);  //TEMP FOR TESTING ONLY!!!!!!
+    alert($SelAgency); //TEMP, DO SOMETHING HERE
 
-	return;
+    return;
 }
 
 // Function to Handle List Clicks
@@ -165,6 +138,55 @@ function listClick($listID) {
 	$("#aFeed").html("<a href='" + $curData["feed_baseurl"] + "' target='_blank'>" + $curData["feed_baseurl"] + "</a>");
 	$("#aOfficial").html($aOfficial);
 	$("#aFeedLastUpdated").html($datetime);
+
+	return;
+}
+
+// Function to Select GTFS Exchange Feed
+function selectFeed() {
+    $("#mAgency").modal('show'); // Load dialogue window
+    $diaName = "Agency"; // Set active dialogue name
+
+	$.ajax({
+	    url: $GTFS_API,
+	    method: "GET",
+	    dataType: "jsonp",
+	    success: function($data) {
+	    	parseGTFS($data);
+	    }
+	});
+
+	return;
+}
+
+// Function to Select GTFS ZIP File
+function selectZIP() {
+    $("#mUploadZIP").modal("show"); // Load dialogue window
+    $diaName = "Upload"; // Set active dialogue name
+    $('#zipurl').prop('disabled', true); // Disable field until radio checked
+    $('#zipfile').prop('disabled', true); // Disable field until radio checked 
+
+	return;
+}
+
+// Function to Validate and Upload ZIP File
+function uploadZIP() {
+
+
+	// ADD VALIDATION HANDLING HERE
+	if($ZipType == "url") alert($('#zipurl').val());
+	else alert($('#zipfile').val());
+
+
+
+	// Clear and close dialogue after validation
+	$("#upload-ZIP").prop("disabled", true);
+	$("#mUploadZIP").modal("hide");
+	$("input[name='ziptype']").prop("checked", false); // Clear radio boxes
+	$diaName = null; // Clear active dilogue
+	$ZipType = null; // Clear Radio Box Type
+	$('#zipfile').val(""); // Clear field value
+	$('#zipurl').val(""); // Clear field value
 
 	return;
 }
@@ -218,14 +240,14 @@ $(document).ready(function() {
 		loadAgency();
 	});
 
-	// Event Handler to Select Agency on Click
-	$("#select-agency").on("click", function (e) {
-		loadGTFS();
+	// Event Handler to Select Feed Agency on Click
+	$("#select-feed").on("click", function (e) {
+		selectFeed();
 	});
 
 	// Event Handler to Select Upload Method on Click
-	$("#upload-gtfs").on("click", function (e) {
-		loadZIP();
+	$("#select-zip").on("click", function (e) {
+		selectZIP();
 	});
 
 	// Event Handler to Upload ZIP from URL or File
@@ -269,15 +291,17 @@ $(document).ready(function() {
 
 // Determine ZIP Radio Button Value and Call Function
 $(document).on("change", "input[name='ziptype']:radio", function() {
+	$ZipType = $(this).val();
+	$('#upload-ZIP').prop('disabled', false);
 	if($(this).val() == "url") {
 		$('#zipurl').prop('disabled', false);
 		$('#zipfile').prop('disabled', true);
-		$('#zipfile').val("");
+		$('#zipfile').val(""); // Clear disabled field value
 	}
 	else {
 		$('#zipurl').prop('disabled', true);
 		$('#zipfile').prop('disabled', false);
-		$('#zipurl').val("");
+		$('#zipurl').val(""); // Clear disabled field value
 	}
 });
 
