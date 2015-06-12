@@ -58,7 +58,7 @@ function clearAgency() {
 
 // Function to Clear Upload
 function clearUpload() {
-	$('#load-ZIP').prop('disabled', true); // Disable submit button
+	$('#upload-ZIP').prop('disabled', true); // Disable submit button
 	$('#mUploadZIP').modal('hide'); // Hide dialogue
 	$diaName = null; // Clear active dialogue name
 
@@ -110,6 +110,11 @@ function loadGTFS() {
 function loadZIP() {
     $("#mUploadZIP").modal("show"); // Load dialogue window
     $diaName = "Upload"; // Set active dialogue name
+    $('#zipurl').prop('disabled', true); // Disable field until radio checked
+    $('#zipfile').prop('disabled', true); // Disable field until radio checked 
+    
+
+    $('#upload-ZIP').prop('disabled', false);  //TEMP FOR TESTING ONLY!!!!!!
 
 	return;
 }
@@ -208,7 +213,7 @@ function parseGTFS($gtfsjson) {
 
 // When HTML Document Loaded, Add Listeners Here
 $(document).ready(function() {
-	// Event Handler to Load Selected Agency on Click
+	// Event Handler to Load Selected Agency ZIP on Click
 	$("#load-agency").on("click", function (e) {
 		loadAgency();
 	});
@@ -218,35 +223,62 @@ $(document).ready(function() {
 		loadGTFS();
 	});
 
-	// Event Handler to Select Agency on Click
+	// Event Handler to Select Upload Method on Click
 	$("#upload-gtfs").on("click", function (e) {
 		loadZIP();
 	});
 
-	// Event Handler for Popovers
+	// Event Handler to Upload ZIP from URL or File
+	$("#upload-ZIP").on("click", function (e) {
+		uploadZIP();
+	});
+
+	// Event Handler for All Popovers
 	$("[data-toggle='popover']").popover();
 
 	// ZIP File Form Validator
-	$('#zipform').validate({
-	        rules: {
-	            zipurl: {
-	                //regex: /(http(s?):)|([/|.|\w|\s])*\.(?:zip)/,
-	                regex: /(http(s?):)|([/|.|\w|\s])*\.(zip)/,
-	                required: "#zipfile:blank"
-	            },
-	            zipfile: {
-	                minlength: 2,
-	                required: "#zipurl:blank"
-	            }
-	        },
-	        highlight: function (element) {
-	            $(element).closest('.control-group').removeClass('success').addClass('error');
-	        },
-	        success: function (element) {
-	            element.text('OK!').addClass('valid')
-	                .closest('.control-group').removeClass('error').addClass('success');
-	        }
-	    });
+	/*
+	jQuery.validator.setDefaults({
+		debug: true,
+		success: "valid"
+	});
+	$("#zipform").validate({
+        rules: {
+            zipurl: {
+                //regex: /(http(s?):)|([/|.|\w|\s])*\.(?:zip)/,
+                regex: /(http(s?):)|([/|.|\w|\s])*\.(zip)/,
+                required: "#zipfile:blank"
+            },
+            zipfile: {
+                //minlength: 2,
+                //accept: "application/octet-stream,application/zip,application/x-zip,application/x-zip-compressed",
+                required: "#zipurl:blank",
+                extension: "zip"
+                //accept: "application/zip,application/octet-stream,application/x-zip,application/x-zip-compressed"
+            }
+        },
+        highlight: function (e) {
+            $(e).closest('.control-group').removeClass('success').addClass('error');
+        },
+        success: function (e) {
+            e.text('OK!').addClass('valid')
+                .closest('.control-group').removeClass('error').addClass('success');
+        }
+	});*/
+});
+
+// Determine ZIP Radio Button Value and Call Function
+$(document).on("change", "input[name='ziptype']:radio", function() {
+	if($(this).val() == "url") {
+		$('#zipurl').prop('disabled', false);
+		$('#zipfile').prop('disabled', true);
+		$('#zipfile').val("");
+	}
+	else {
+		$('#zipurl').prop('disabled', true);
+		$('#zipfile').prop('disabled', false);
+		$('#zipurl').val("");
+	}
 });
 
 // Initialize Google Maps DOM on Page Load
