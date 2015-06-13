@@ -6,5 +6,5 @@ setup(name='GTFS Viewer',
 	author='Jon Kostyniuk',
 	author_email='jon.kostyniuk@gmail.com',
 	url='http://gtfsviewer-jonkostyniuk.rhcloud.com/',
-	install_requires=['Flask>=0.10.1'],
+	install_requires=['Flask>=0.10.1','pandas>=0.16.1'],
 	)
