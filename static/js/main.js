@@ -168,6 +168,34 @@ function listClick($listID) {
 	return;
 }
 
+// Function to Preload GTFS Agency Data from Server
+function preloadGTFS() {
+	if($UUID != "null") {
+		$.ajax({
+			url: "./api/agencies",
+			method: "GET",
+			data: {"uuid": $UUID},
+			dataType: "text", // change to 'jsonp'
+			success: function($data) {
+				alert($data); // need to handle json here
+			},
+		    error: function ($jqXHR, $textStatus, $errorThrown) {
+	            if ($jqXHR.status == 500) {
+	            	alert("Preload Agency Data: Internal error: " + $jqXHR.responseText);
+	            } else {
+	            	alert("Preload Agency Data: Unexpected error!!");
+	            }
+	        }
+		});		
+	}
+	//else
+
+	// If Error, replace Agency Dropdown and throw Error Message
+	///code here
+
+	return;
+}
+
 // Function to Select GTFS Exchange Feed
 function selectFeed() {
     $("#mAgency").modal('show'); // Load dialogue window
@@ -350,6 +378,9 @@ google.maps.event.addDomListener(window, 'load', initMap());
 
 // Create and/or Verify Unique User ID on Client Side
 createUUID();
+
+// Preload GTFS Agency Data from Server
+preloadGTFS();
 
 
 // ##########################################################################################################

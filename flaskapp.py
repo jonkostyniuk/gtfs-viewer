@@ -64,17 +64,22 @@ app.config.from_pyfile("flaskapp.cfg")	# Configure Application Object
 # ------------------
 
 # Function to Get GTFS Exchange Feed
-@app.route("/api/gtfs")
+@app.route("/api/agencies", methods=["GET"])
+def apiAgencies():
+	return gv.getAgencies(fl.request.args.get("uuid"))
+
+# Function to Get GTFS Exchange Feed
+@app.route("/api/gtfs", methods=["GET"])
 def apiGTFS():
     return gv.getGTFS()
 
 # Function to Query Test API
-@app.route("/api/test")
+@app.route("/api/test", methods=["GET"])
 def apiTest():
     return "<strong>The test API works!!</strong>"
 
 # Function to Create Unique User ID
-@app.route("/api/uuid")
+@app.route("/api/uuid", methods=["GET"])
 def apiCreateUUID():
     return gv.createUUID()
 

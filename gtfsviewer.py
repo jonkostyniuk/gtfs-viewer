@@ -45,12 +45,10 @@ import zipfile
 # -------------------------
 
 # Initialize
-global ABC		# Global Constant Description #1
-global XYZ		# Global Constant Description #2
+global DATA_FOLDER		   # GTFS Server Side Data Folder
 
 # Define
-ABC = ""
-XYZ = ""
+DATA_FOLDER = "./data"
 
 # DEFINITIONS
 # -----------
@@ -83,11 +81,10 @@ def createUUID():
   return str(uuid.uuid4().hex)
 
 # Function to Get Agency
-def getAgency():
+def getAgencies(uuid):
+  # MORE CODE HERE!!
 
-
-
-  return 'Agency'
+  return str(uuid)
 
 # Function to Get GTFS Exchange API Data
 def getGTFS():
