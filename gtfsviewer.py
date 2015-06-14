@@ -33,6 +33,7 @@
 import pandas as pd
 import StringIO
 import requests
+import uuid
 import zipfile
 
 # CUSTOM MODULES
@@ -76,6 +77,10 @@ GTFS_API = "http://www.gtfs-data-exchange.com/api/agencies" # GTFS Exchange API 
 
 # MODULE FUNCTIONS
 # ----------------
+
+# Function to Create Unique User ID
+def createUUID():
+  return str(uuid.uuid4().hex)
 
 # Function to Get Agency
 def getAgency():

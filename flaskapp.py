@@ -63,7 +63,7 @@ app.config.from_pyfile("flaskapp.cfg")	# Configure Application Object
 # API CALL FUNCTIONS
 # ------------------
 
-# Function to Query Test API
+# Function to Get GTFS Exchange Feed
 @app.route("/api/gtfs")
 def apiGTFS():
     return gv.getGTFS()
@@ -72,6 +72,11 @@ def apiGTFS():
 @app.route("/api/test")
 def apiTest():
     return "<strong>The test API works!!</strong>"
+
+# Function to Create Unique User ID
+@app.route("/api/uuid")
+def apiCreateUUID():
+    return gv.createUUID()
 
 # URL REFERENCE FUNCTIONS
 # -----------------------

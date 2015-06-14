@@ -36,6 +36,7 @@ var $ZipType = null;												// ZIP Radio - URL or File
 
 // GUI Variables
 var $diaName = null;												// Name of Dialogue Window Open
+var $UUID = null;													// Client Side Unique User ID
 
 
 // ##########################################################################################################
@@ -62,6 +63,31 @@ function clearUpload() {
 	$('#upload-ZIP').prop('disabled', true); // Disable submit button
 	$('#mUploadZIP').modal('hide'); // Hide dialogue
 	$diaName = null; // Clear active dialogue name
+
+	return;
+}
+
+// Function to Create and/or Verify Unique User ID
+function createUUID() {
+	if(localStorage.getItem("uuid") == "null") {
+		$.ajax({
+			url: "./api/uuid",
+			method: "GET",
+			dataType: "text",
+			success: function($data) {
+				localStorage.setItem("uuid", $data);
+				$UUID = $data;
+			},
+		    error: function ($jqXHR, $textStatus, $errorThrown) {
+	            if ($jqXHR.status == 500) {
+	            	alert("Internal error: " + $jqXHR.responseText);
+	            } else {
+	            	alert("Unexpected error!!");
+	            }
+	        }
+		});
+	} 
+	else $UUID = localStorage.getItem("uuid");
 
 	return;
 }
@@ -228,6 +254,15 @@ function parseGTFS($gtfsjson) {
 	return ;
 }
 
+// TEMP FOR TESTING
+function removeUUID() {
+	$UUID = null;
+	localStorage.setItem("uuid", $UUID)
+	alert("UUID is " + localStorage.getItem("uuid"));
+
+	return;
+}
+
 
 // ##########################################################################################################
 // MAIN PROGRAM
@@ -248,6 +283,11 @@ $(document).ready(function() {
 	// Event Handler to Select Upload Method on Click
 	$("#select-zip").on("click", function (e) {
 		selectZIP();
+	});
+
+	// TEMP FOR TESTING
+	$("#remuuid").on("click", function (e) {
+		removeUUID();
 	});
 
 	// Event Handler to Upload ZIP from URL or File
@@ -307,6 +347,9 @@ $(document).on("change", "input[name='ziptype']:radio", function() {
 
 // Initialize Google Maps DOM on Page Load
 google.maps.event.addDomListener(window, 'load', initMap());
+
+// Create and/or Verify Unique User ID on Client Side
+createUUID();
 
 
 // ##########################################################################################################
