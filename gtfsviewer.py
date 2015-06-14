@@ -30,6 +30,7 @@
 # ----------------
 
 #import csv
+import os
 import pandas as pd
 import StringIO
 import requests
@@ -48,7 +49,7 @@ import zipfile
 global DATA_FOLDER		   # GTFS Server Side Data Folder
 
 # Define
-DATA_FOLDER = "./data"
+DATA_FOLDER = "./data/"
 
 # DEFINITIONS
 # -----------
@@ -82,9 +83,12 @@ def createUUID():
 
 # Function to Get Agency
 def getAgencies(uuid):
-  # MORE CODE HERE!!
-
-  return str(uuid)
+  if os.path.isdir(DATA_FOLDER + str(uuid)):
+    return str(uuid)
+  else:
+    os.makedirs(DATA_FOLDER + str(uuid))
+    return 'true'
+    # MORE CODE HERE!!
 
 # Function to Get GTFS Exchange API Data
 def getGTFS():

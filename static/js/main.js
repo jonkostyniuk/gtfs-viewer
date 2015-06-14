@@ -77,6 +77,7 @@ function createUUID() {
 			success: function($data) {
 				localStorage.setItem("uuid", $data);
 				$UUID = $data;
+				preloadGTFS();
 			},
 		    error: function ($jqXHR, $textStatus, $errorThrown) {
 	            if ($jqXHR.status == 500) {
@@ -87,7 +88,10 @@ function createUUID() {
 	        }
 		});
 	} 
-	else $UUID = localStorage.getItem("uuid");
+	else {
+		$UUID = localStorage.getItem("uuid");
+		preloadGTFS();
+	}
 
 	return;
 }
@@ -188,7 +192,9 @@ function preloadGTFS() {
 	        }
 		});		
 	}
-	//else
+	else {
+		x=0;
+	}
 
 	// If Error, replace Agency Dropdown and throw Error Message
 	///code here
@@ -380,7 +386,7 @@ google.maps.event.addDomListener(window, 'load', initMap());
 createUUID();
 
 // Preload GTFS Agency Data from Server
-preloadGTFS();
+//preloadGTFS();
 
 
 // ##########################################################################################################
