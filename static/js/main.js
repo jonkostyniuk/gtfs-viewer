@@ -28,7 +28,8 @@
 var $map = null;													// Google Map Variable
 
 // GTFS Data Variables
-var $AgencyData = null; 											// JSON Object for Agency Data
+var $AgencyData = null; 											// JSON Object for Agency Feed Data
+var $AgencyPreset = null;											// JSON Object for User Agency Preset Data
 var $SelAgency = null;												// Selected Transit Agency ID
 var $GTFS_API = "http://www.gtfs-data-exchange.com/api/agencies"	// GTFS Exchange API Data
 var $GTFS_ZIP = new RegExp(/\.(zip$)/);								// GTFS ZIP File Regular Expression
@@ -179,9 +180,15 @@ function preloadGTFS() {
 			url: "./api/agencies",
 			method: "GET",
 			data: {"uuid": $UUID},
-			dataType: "text", // change to 'jsonp'
+			dataType: "json", // change to 'jsonp'
 			success: function($data) {
-				alert($data); // need to handle json here
+
+				$AgencyPreset = $data;
+
+
+
+				$("#testout").html("success");
+				//alert($data); // need to handle json here
 			},
 		    error: function ($jqXHR, $textStatus, $errorThrown) {
 	            if ($jqXHR.status == 500) {

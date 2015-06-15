@@ -30,6 +30,7 @@
 # ----------------
 
 #import csv
+import json
 import os
 import pandas as pd
 import StringIO
@@ -56,6 +57,17 @@ DATA_FOLDER = "./data/"
 
 # SQLite Database Variables
 #dbConn = None
+
+testdata = {
+  "success": "true",
+  "uuid": "4f7698c38c734c249ecf9aa5a3c6e0ca",
+  "data": [
+    {
+      "timestamp": 1434328453,
+      "agency_name": "York Region Transit"
+    }
+  ]
+}
 
 # General Transit Feed Specification (GTFS) Variables
 #gtfsSource = "http://gtfs.winnipegtransit.com/google_transit.zip"	# GTFS Source File
@@ -84,11 +96,17 @@ def createUUID():
 # Function to Get Agency
 def getAgencies(uuid):
   if os.path.isdir(DATA_FOLDER + str(uuid)):
-    return str(uuid)
+    
+
+
+    # MORE CODE HERE!!    
+    return json.dumps(testdata)
   else:
     os.makedirs(DATA_FOLDER + str(uuid))
-    return 'true'
-    # MORE CODE HERE!!
+
+
+
+    return json.dumps({})
 
 # Function to Get GTFS Exchange API Data
 def getGTFS():
@@ -183,6 +201,21 @@ save... train.to_csv('./data/train-new.csv')
 
 """
 JSON--
+
+{
+  "success": "true",
+  "uuid": "4f7698c38c734c249ecf9aa5a3c6e0ca",
+  "data": [
+    {
+      "timestamp": 1434328453,
+      "agency_name": "York Region Transit",
+      "agency_url": "http://www.yrt.ca"
+    }
+  ]
+}
+
+
+
 
 {
   "shape_id": 36099,
