@@ -93,20 +93,30 @@ GTFS_API = "http://www.gtfs-data-exchange.com/api/agencies" # GTFS Exchange API 
 def createUUID():
   return str(uuid.uuid4().hex)
 
-# Function to Get Agency
+# Function to Get Preloaded Agencies
 def getAgencies(uuid):
-  if os.path.isdir(DATA_FOLDER + str(uuid)):
-    
-
-
-    # MORE CODE HERE!!    
-    return json.dumps(testdata)
+  # Define UUID Folder Path Variables
+  uuidpath = DATA_FOLDER + str(uuid)
+  jsondata = {}
+  jsondata["uuid"] = uuid
+  jsondata["data"] = []  
+  # Check if server-side UUID directory exists
+  if os.path.isdir(uuidpath):
+    # Get preset folders for UUID
+    listPreset = os.listdir(uuidpath)
+    # Populate preset data list
+    for listitem in listPreset:
+      itemdata = {}
+      itemdata["timestamp"] = int(listitem)
+      itemdata["agency_name"] = readAgency(uuidpath + "/" + listitem + "/")
+      jsondata["data"].append(itemdata)
+  # Create directory for UUID
   else:
-    os.makedirs(DATA_FOLDER + str(uuid))
-
-
-
-    return json.dumps({})
+    os.makedirs(uuidpath)
+  # Indicate JSON Data Success
+  jsondata["success"] = "true"
+  
+  return json.dumps(jsondata)
 
 # Function to Get GTFS Exchange API Data
 def getGTFS():
@@ -120,6 +130,11 @@ def getRoutes():
 
 # HELPER (MONKEY) FUNCTIONS
 # -------------------------
+
+# Function to Read Agency File
+def readAgency(filepath):
+  pdAgency = pd.read_csv(filepath + "agency.txt")
+  return pdAgency["agency_name"][0]
 
 # Function to Extract GTFS ZIP to Temporary Folder
 def unzipGTFS(fileloc):
@@ -201,21 +216,6 @@ save... train.to_csv('./data/train-new.csv')
 
 """
 JSON--
-
-{
-  "success": "true",
-  "uuid": "4f7698c38c734c249ecf9aa5a3c6e0ca",
-  "data": [
-    {
-      "timestamp": 1434328453,
-      "agency_name": "York Region Transit",
-      "agency_url": "http://www.yrt.ca"
-    }
-  ]
-}
-
-
-
 
 {
   "shape_id": 36099,

@@ -79,7 +79,7 @@ def apiTest():
     return "<strong>The test API works!!</strong>"
 
 # Function to Create Unique User ID
-@app.route("/api/uuid", methods=["GET"])
+@app.route("/api/uuid", methods=["GET"]) #CHANGE TO POST FOR MORE SECURITY
 def apiCreateUUID():
     return gv.createUUID()
 

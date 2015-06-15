@@ -180,7 +180,7 @@ function preloadGTFS() {
 			url: "./api/agencies",
 			method: "GET",
 			data: {"uuid": $UUID},
-			dataType: "json", // change to 'jsonp'
+			dataType: "json",
 			success: function($data) {
 
 				$AgencyPreset = $data;
