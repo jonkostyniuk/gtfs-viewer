@@ -98,7 +98,7 @@ def getAgencies(uuid):
   # Define UUID Folder Path Variables
   uuidpath = DATA_FOLDER + str(uuid)
   jsondata = {}
-  jsondata["uuid"] = uuid
+  jsondata["uuid"] = str(uuid)
   jsondata["data"] = []  
   # Check if server-side UUID directory exists
   if os.path.isdir(uuidpath):

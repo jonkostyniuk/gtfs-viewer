@@ -178,16 +178,16 @@ function preloadGTFS() {
 	if($UUID != "null") {
 		$.ajax({
 			url: "./api/agencies",
-			method: "GET",
-			data: {"uuid": $UUID},
+			method: "POST",
+			contentType: 'application/json',
+			data: JSON.stringify({"uuid": $UUID}),
 			dataType: "json",
 			success: function($data) {
-
+				// Save Agency Preset JSON Data
 				$AgencyPreset = $data;
 
 
-
-				$("#testout").html("success");
+				$("#testout").html($AgencyPreset["uuid"]);
 				//alert($data); // need to handle json here
 			},
 		    error: function ($jqXHR, $textStatus, $errorThrown) {

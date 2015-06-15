@@ -64,9 +64,13 @@ app.config.from_pyfile("flaskapp.cfg")	# Configure Application Object
 # ------------------
 
 # Function to Get GTFS Exchange Feed
-@app.route("/api/agencies", methods=["GET"])
+@app.route("/api/agencies", methods=["POST"])
 def apiAgencies():
-	return gv.getAgencies(fl.request.args.get("uuid"))
+	return gv.getAgencies(fl.request.json["uuid"])
+	#return gv.getAgencies(fl.request.args.get("uuid")) ## WORKS FOR 'GET'
+	#return gv.getAgencies(json.loads(fl.request.data)["uuid"])
+	#data = request.data
+	#dataDict = json.loads(data)
 
 # Function to Get GTFS Exchange Feed
 @app.route("/api/gtfs", methods=["GET"])
@@ -79,7 +83,7 @@ def apiTest():
     return "<strong>The test API works!!</strong>"
 
 # Function to Create Unique User ID
-@app.route("/api/uuid", methods=["GET"]) #CHANGE TO POST FOR MORE SECURITY
+@app.route("/api/uuid", methods=["GET"])
 def apiCreateUUID():
     return gv.createUUID()
 
