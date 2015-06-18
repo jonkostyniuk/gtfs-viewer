@@ -74,6 +74,12 @@ def apiAgencies():
 def apiGTFS():
     return gv.getGTFS()
 
+# Function to Agency Route Data
+@app.route("/api/routes", methods=["POST"])
+def apiRoutes():
+	return gv.getRoutes(fl.request.json["uuid"], fl.request.json["agency_id"])
+	#return gv.getAgencies(fl.request.args.get("uuid")) ## WORKS FOR 'GET'
+
 # Function to Query Test API
 @app.route("/api/test", methods=["GET"])
 def apiTest():

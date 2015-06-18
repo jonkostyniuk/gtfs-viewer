@@ -126,10 +126,10 @@ def getGTFS():
   return requests.get(GTFS_API).text
 
 # Function to Get Routes List
-def getRoutes():
+def getRoutes(uuid, AgencyID):
 
 
-  return 'Routes'
+  return json.dumps({'Routes': 'none'})
 
 # HELPER (MONKEY) FUNCTIONS
 # -------------------------

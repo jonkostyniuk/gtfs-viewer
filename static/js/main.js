@@ -122,7 +122,7 @@ function initMap() {
 	// Create New Google Maps Object
 	var $mapOptions = {
 	    zoom: 5,
-	    center: new google.maps.LatLng(49.176623, -97.962114)
+	    center: new google.maps.LatLng(49.895529, -97.138449)
 		};
 	$map = new google.maps.Map($('#gmap')[0], $mapOptions);
 
