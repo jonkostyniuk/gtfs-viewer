@@ -29,11 +29,14 @@ var $map = null;													// Google Map Variable
 
 // GTFS Data Variables
 var $AgencyData = null; 											// JSON Object for Agency Feed Data
-var $AgencyPreset = null;											// JSON Object for User Agency Preset Data
 var $SelAgency = null;												// Selected Transit Agency ID
 var $GTFS_API = "http://www.gtfs-data-exchange.com/api/agencies"	// GTFS Exchange API Data
 var $GTFS_ZIP = new RegExp(/\.(zip$)/);								// GTFS ZIP File Regular Expression
 var $ZipType = null;												// ZIP Radio - URL or File
+
+// Loaded Agency Variables
+var $AgencyPreset = null;											// JSON Object for User Agency Preset Data
+var $RoutesData = null;												// JSON Object for Agency Route Data
 
 // GUI Variables
 var $diaName = null;												// Name of Dialogue Window Open
@@ -157,6 +160,8 @@ function loadRoutes() {
 			data: JSON.stringify($reqData),
 			dataType: "json",
 			success: function($data) {
+				//alert($data["Routes"]);
+				$RoutesData = $data;
 				$x=0;//START CODING HERE
 			},
 		    error: function ($jqXHR, $textStatus, $errorThrown) {
@@ -174,7 +179,7 @@ function loadRoutes() {
 	}
     
 
-    alert($('#agency').val().split("_")[1]); //TEMP, DO SOMETHING HERE
+    //alert($('#agency').val().split("_")[1]); //TEMP, DO SOMETHING HERE
 
     return;
 }

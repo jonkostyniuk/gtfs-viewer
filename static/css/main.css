@@ -52,6 +52,7 @@ html, body {
 /* PAGE BODY ID ELEMENTS */
 #sidebar {
     background: #eeeeee;
+    overflow-y: scroll;
 }
 #sidebar h2 {
     font-size: 0.9em;
@@ -75,13 +76,14 @@ html, body {
     font-size: 0.8em;
 }
 
-#gtfs-data {
+#gtfs-output {
     background: #eeeeee;
+    overflow-y: scroll;
 }
-#gtfs-data h2 {
+#gtfs-output h2 {
     font-size: 0.9em;
 }
-#gtfs-data p {
+#gtfs-output p {
     font-size: 0.8em;
 }
 

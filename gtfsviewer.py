@@ -109,7 +109,7 @@ def getAgencies(uuid):
     for listitem in listPreset:
       itemdata = {}
       itemdata["timestamp"] = int(listitem)
-      itemdata["agency_name"] = readAgency(uuidpath + "/" + listitem + "/")
+      itemdata["agency_name"] = readAgencyName(uuidpath + "/" + listitem + "/")
       jsondata["data"].append(itemdata)
       dataCount += 1
   # Create directory for UUID
@@ -127,17 +127,45 @@ def getGTFS():
 
 # Function to Get Routes List
 def getRoutes(uuid, AgencyID):
+  # Define UUID and Preset Agency Folder Path
+  datapath = DATA_FOLDER + str(uuid) + "/" + str(AgencyID) + "/"
+  jsondata = {}
+  jsondata["uuid"] = str(uuid)
+  jsondata["agency_id"] = int(AgencyID)
+  
+  # Get Full Agency Information to Display
+  ##agency.txt
 
+  # Get Required Route Fields to Display
+  jsondata["data"] = readRoutes(datapath)
+  # Indicate JSON Data Success
+  #jsondata["data_count"] = dataCount
+  jsondata["success"] = "true"
 
-  return json.dumps({'Routes': 'none'})
+  #return json.dumps({'Routes': datapath})
+  return json.dumps(jsondata)
 
 # HELPER (MONKEY) FUNCTIONS
 # -------------------------
 
 # Function to Read Agency File
-def readAgency(filepath):
+def readAgencyName(filepath):
   pdAgency = pd.read_csv(filepath + "agency.txt")
   return pdAgency["agency_name"][0]
+
+# Function to Read Routes File
+def readRoutes(filepath):
+  pdRoutes = pd.read_csv(filepath + "routes.txt")
+  pdRoutes = pdRoutes.sort_index(by = "route_short_name")
+  listRoutes = []
+  for index, rows in pdRoutes.iterrows():
+    itemdata = {}
+    #itemdata["route_id"] = rows["route_id"]
+    itemdata["route_short_name"] = rows["route_short_name"]
+    itemdata["route_long_name"] = rows["route_long_name"]
+    itemdata["route_type"] = rows["route_type"]
+    listRoutes.append(itemdata)
+  return listRoutes
 
 # Function to Extract GTFS ZIP to Temporary Folder
 def unzipGTFS(fileloc):
