@@ -68,9 +68,6 @@ app.config.from_pyfile("flaskapp.cfg")	# Configure Application Object
 def apiAgencies():
 	return gv.getAgencies(fl.request.json["uuid"])
 	#return gv.getAgencies(fl.request.args.get("uuid")) ## WORKS FOR 'GET'
-	#return gv.getAgencies(json.loads(fl.request.data)["uuid"])
-	#data = request.data
-	#dataDict = json.loads(data)
 
 # Function to Get GTFS Exchange Feed
 @app.route("/api/gtfs", methods=["GET"])

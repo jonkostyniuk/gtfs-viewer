@@ -1,0 +1,7 @@
+service_id,date,exception_type
+15MAY-Vehicle-Weekday-22,20150701,2
+15MAY-Vehicle-Weekday-22,20150803,2
+15MAY-Vehicle-Weekday-22,20150907,2
+15MAY-Vehicle-Sunday-18,20150701,1
+15MAY-Vehicle-Sunday-18,20150803,1
+15MAY-Vehicle-Sunday-18,20150907,1

@@ -39,6 +39,26 @@ var $ZipType = null;												// ZIP Radio - URL or File
 var $diaName = null;												// Name of Dialogue Window Open
 var $UUID = null;													// Client Side Unique User ID
 
+// AJAX Loading 'spin.js' Variables
+var opts = { 														// Set Spin Options
+   lines: 13, // The number of lines to draw
+   length: 7, // The length of each line
+   width: 4, // The line thickness
+   radius: 10, // The radius of the inner circle
+   rotate: 0, // The rotation offset
+   color: '#efefef', // #rgb or #rrggbb
+   speed: 0.75, // Rounds per second
+   trail: 50, // Afterglow percentage
+   shadow: true, // Whether to render a shadow
+   hwaccel: false, // Whether to use hardware acceleration
+   className: 'spinner', // The CSS class to assign to the spinner
+   zIndex: 10000, // The z-index (defaults to 2000000000)
+   top: 'auto', // Top position relative to parent in px
+   left: 'auto' // Left position relative to parent in px
+};
+var spinner = new Spinner(opts);									// Spinner Object Initialize
+var ajax_cnt = 0;													// Support for parallel AJAX requests
+ 
 
 // ##########################################################################################################
 // DEFINED FUNCTIONS
@@ -123,6 +143,42 @@ function loadAgency() {
     return;
 }
 
+// Function to Load Agency
+function loadRoutes() {
+	if($('#agency').val() != "null") {
+		var $reqData = {
+			"uuid": $UUID,
+			"agency_id": $('#agency').val().split("_")[1]
+		}
+		$.ajax({
+			url: "./api/routes",
+			method: "POST",
+			contentType: "application/json",
+			data: JSON.stringify($reqData),
+			dataType: "json",
+			success: function($data) {
+				$x=0;//START CODING HERE
+			},
+		    error: function ($jqXHR, $textStatus, $errorThrown) {
+	            if ($jqXHR.status == 500) {
+	            	alert("Preload Agency Data: Internal error: " + $jqXHR.responseText);
+	            } else {
+	            	alert("Preload Agency Data: Unexpected error!!");
+	            }
+	        }
+		});		
+	}
+	else {
+		// clear route selector and to null
+		// disable route selector
+	}
+    
+
+    alert($('#agency').val().split("_")[1]); //TEMP, DO SOMETHING HERE
+
+    return;
+}
+
 // Function to Handle List Clicks
 function listClick($listID) {
 	// Determine which dialogue to handle
@@ -185,10 +241,16 @@ function preloadGTFS() {
 			success: function($data) {
 				// Save Agency Preset JSON Data
 				$AgencyPreset = $data;
+				$("#testout").html($AgencyPreset["uuid"]);//TEMP OUTPUT
 
-
-				$("#testout").html($AgencyPreset["uuid"]);
-				//alert($data); // need to handle json here
+				// Load Agency Dropdown Data
+				var AgencyOpt = {}
+				for(var $i = 0; $i < $AgencyPreset["data_count"]; $i++) {
+					AgencyOpt["aID_" + $AgencyPreset["data"][$i]["timestamp"]] = $AgencyPreset["data"][$i]["agency_name"];
+				}
+				$.each(AgencyOpt, function(val, text) {
+				    $("#agency").append(new Option(text,val));
+				});
 			},
 		    error: function ($jqXHR, $textStatus, $errorThrown) {
 	            if ($jqXHR.status == 500) {
@@ -200,11 +262,8 @@ function preloadGTFS() {
 		});		
 	}
 	else {
-		x=0;
+		alert("ERROR: User preloaded agencies unavailable!! Please try again later.")
 	}
-
-	// If Error, replace Agency Dropdown and throw Error Message
-	///code here
 
 	return;
 }
@@ -386,14 +445,31 @@ $(document).on("change", "input[name='ziptype']:radio", function() {
 	}
 });
 
+// Global functions to show/hide on ajax requests
+$(document).ajaxStart(function() {
+   $("<div id='spinner_center' style='position:fixed;top:70px;left:49%;'>&nbsp;</div>").appendTo("body");
+   spinner.spin($("#spinner_center")[0]);
+   ajax_cnt++;
+});
+$(document).ajaxStop(function() {
+   ajax_cnt--;
+   if (ajax_cnt <= 0) {
+      spinner.stop();
+      $("#spinner_center").remove();
+      ajax_cnt = 0;
+   }
+});
+
+// Event Handler on Transit Agency Change, Load Transit Routes
+$("#agency").change(function() {
+	loadRoutes();
+});
+
 // Initialize Google Maps DOM on Page Load
 google.maps.event.addDomListener(window, 'load', initMap());
 
 // Create and/or Verify Unique User ID on Client Side
 createUUID();
-
-// Preload GTFS Agency Data from Server
-//preloadGTFS();
 
 
 // ##########################################################################################################

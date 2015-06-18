@@ -101,6 +101,7 @@ def getAgencies(uuid):
   jsondata["uuid"] = str(uuid)
   jsondata["data"] = []  
   # Check if server-side UUID directory exists
+  dataCount = 0
   if os.path.isdir(uuidpath):
     # Get preset folders for UUID
     listPreset = os.listdir(uuidpath)
@@ -110,10 +111,12 @@ def getAgencies(uuid):
       itemdata["timestamp"] = int(listitem)
       itemdata["agency_name"] = readAgency(uuidpath + "/" + listitem + "/")
       jsondata["data"].append(itemdata)
+      dataCount += 1
   # Create directory for UUID
   else:
     os.makedirs(uuidpath)
   # Indicate JSON Data Success
+  jsondata["data_count"] = dataCount
   jsondata["success"] = "true"
   
   return json.dumps(jsondata)
