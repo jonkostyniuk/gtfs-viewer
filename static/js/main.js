@@ -159,6 +159,7 @@ function loadRoutes() {
 			contentType: "application/json",
 			data: JSON.stringify($reqData),
 			dataType: "json",
+			timeout: 60000,
 			success: function($data) {
 				//alert($data["Routes"]);
 				$RoutesData = $data;

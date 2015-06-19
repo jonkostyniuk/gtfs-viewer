@@ -142,8 +142,11 @@ def getRoutes(uuid, AgencyID):
   #jsondata["data_count"] = dataCount
   jsondata["success"] = "true"
 
-  #return json.dumps({'Routes': datapath})
+
+  print json.dumps(jsondata)
+
   return json.dumps(jsondata)
+  
 
 # HELPER (MONKEY) FUNCTIONS
 # -------------------------
@@ -151,20 +154,31 @@ def getRoutes(uuid, AgencyID):
 # Function to Read Agency File
 def readAgencyName(filepath):
   pdAgency = pd.read_csv(filepath + "agency.txt")
+
   return pdAgency["agency_name"][0]
 
 # Function to Read Routes File
 def readRoutes(filepath):
+  # Prepare Route Data
   pdRoutes = pd.read_csv(filepath + "routes.txt")
-  pdRoutes = pdRoutes.sort_index(by = "route_short_name")
+  pdRoutes = pdRoutes.fillna("")
+  pdRoutes = pdRoutes.sort(columns=["route_short_name"])
+  #pdRoutes = pdRoutes.sort_index(by = "route_short_name")
+  numRt = len(pdRoutes)
+  pdRoutes = pdRoutes.to_dict()
+  # Load Route Data
   listRoutes = []
-  for index, rows in pdRoutes.iterrows():
+  for i in range(numRt):
     itemdata = {}
-    #itemdata["route_id"] = rows["route_id"]
-    itemdata["route_short_name"] = rows["route_short_name"]
-    itemdata["route_long_name"] = rows["route_long_name"]
-    itemdata["route_type"] = rows["route_type"]
+    itemdata["route_id"] = str(pdRoutes["route_id"][i]).replace("\xef\xbb\xbf", "")
+    itemdata["route_short_name"] = pdRoutes["route_short_name"][i].replace("\xef\xbb\xbf", "")
+    if pdRoutes["route_long_name"][i] != "":
+      itemdata["route_long_name"] = pdRoutes["route_long_name"][i].replace("\xef\xbb\xbf", "")
+    else:
+      itemdata["route_long_name"] = "[ UNNAMED ROUTE ]"
+    itemdata["route_type"] = pdRoutes["route_type"][i]
     listRoutes.append(itemdata)
+
   return listRoutes
 
 # Function to Extract GTFS ZIP to Temporary Folder
