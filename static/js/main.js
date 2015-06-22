@@ -148,22 +148,42 @@ function loadAgency() {
 
 // Function to Load Agency
 function loadRoutes() {
+	// If a Valid Agency is selected
 	if($('#agency').val() != "null") {
+		// Clear Dropdown List and Add Null Option
+		$("#route").empty();
+		$("#route").append(new Option("[ Select Route ]","NULL"));
+		// Prepare AJAX Send Data
 		var $reqData = {
 			"uuid": $UUID,
-			"agency_id": $('#agency').val().split("_")[1]
+			"agency_id": $('#agency').val().split("aID_")[1]
 		}
+		// AJAX Call and JSON Response
 		$.ajax({
 			url: "./api/routes",
 			method: "POST",
 			contentType: "application/json",
 			data: JSON.stringify($reqData),
 			dataType: "json",
-			timeout: 60000,
 			success: function($data) {
-				//alert($data["Routes"]);
+				// Save Routes Data and Enable Routes Dropdown
 				$RoutesData = $data;
-				$x=0;//START CODING HERE
+				$("#route").prop("disabled", false);
+
+				// Load Agency Dropdown Data
+				var RouteOpt = {}
+				for(var $i = 0; $i < $RoutesData["data_count"]; $i++) {
+					RouteOpt["rtID_" + $RoutesData["data"][$i]["route_id"]] = $RoutesData["data"][$i]["route_short_name"] + " " + $RoutesData["data"][$i]["route_long_name"];
+				}
+				$.each(RouteOpt, function(val, text) {
+				    $("#route").append(new Option(text,val));
+				});
+
+				// Load Agency Info Output
+				$AgencyInfo = $RoutesData["agency_info"]["name"] + "<br />";
+				$AgencyInfo += "<a href='" + $RoutesData["agency_info"]["url"] + "' target='_blank'>";
+				$AgencyInfo += $RoutesData["agency_info"]["url"] + "</a>";
+				$("#agency-out").html($AgencyInfo);
 			},
 		    error: function ($jqXHR, $textStatus, $errorThrown) {
 	            if ($jqXHR.status == 500) {
@@ -174,13 +194,14 @@ function loadRoutes() {
 	        }
 		});		
 	}
-	else {
-		// clear route selector and to null
-		// disable route selector
+	else { // If no valid agency is selected
+		// Disable Routes Dropdown on NULL
+		$("#route").prop("disabled", true);
+		// Clear Dropdown List and Add Null Option
+		$("#route").empty();
+		$("#route").append(new Option("[ Select Route ]","NULL"));
+		$("#agency-out").html("--");
 	}
-    
-
-    //alert($('#agency').val().split("_")[1]); //TEMP, DO SOMETHING HERE
 
     return;
 }

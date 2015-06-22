@@ -132,18 +132,13 @@ def getRoutes(uuid, AgencyID):
   jsondata = {}
   jsondata["uuid"] = str(uuid)
   jsondata["agency_id"] = int(AgencyID)
-  
   # Get Full Agency Information to Display
-  ##agency.txt
-
+  jsondata["agency_info"] = readAgency(datapath)
   # Get Required Route Fields to Display
   jsondata["data"] = readRoutes(datapath)
   # Indicate JSON Data Success
-  #jsondata["data_count"] = dataCount
+  jsondata["data_count"] = len(jsondata["data"])
   jsondata["success"] = "true"
-
-
-  print json.dumps(jsondata)
 
   return json.dumps(jsondata)
   
@@ -151,16 +146,23 @@ def getRoutes(uuid, AgencyID):
 # HELPER (MONKEY) FUNCTIONS
 # -------------------------
 
-# Function to Read Agency File
+# Function to Read Agency Info
+def readAgency(filepath):
+  pdAgency = pd.read_csv(filepath + "agency.txt", encoding="utf-8-sig")
+  pdAgency = pdAgency.fillna("")
+
+  return {"name": pdAgency["agency_name"][0], "url": pdAgency["agency_url"][0], "timezone": pdAgency["agency_timezone"][0],}
+
+# Function to Read Agency Name
 def readAgencyName(filepath):
-  pdAgency = pd.read_csv(filepath + "agency.txt")
+  pdAgency = pd.read_csv(filepath + "agency.txt", encoding="utf-8-sig")
 
   return pdAgency["agency_name"][0]
 
 # Function to Read Routes File
 def readRoutes(filepath):
   # Prepare Route Data
-  pdRoutes = pd.read_csv(filepath + "routes.txt")
+  pdRoutes = pd.read_csv(filepath + "routes.txt", encoding="utf-8-sig")
   pdRoutes = pdRoutes.fillna("")
   pdRoutes = pdRoutes.sort(columns=["route_short_name"])
   #pdRoutes = pdRoutes.sort_index(by = "route_short_name")
@@ -170,10 +172,10 @@ def readRoutes(filepath):
   listRoutes = []
   for i in range(numRt):
     itemdata = {}
-    itemdata["route_id"] = str(pdRoutes["route_id"][i]).replace("\xef\xbb\xbf", "")
-    itemdata["route_short_name"] = pdRoutes["route_short_name"][i].replace("\xef\xbb\xbf", "")
+    itemdata["route_id"] = str(pdRoutes["route_id"][i])#.replace("\xef\xbb\xbf", "")
+    itemdata["route_short_name"] = pdRoutes["route_short_name"][i]
     if pdRoutes["route_long_name"][i] != "":
-      itemdata["route_long_name"] = pdRoutes["route_long_name"][i].replace("\xef\xbb\xbf", "")
+      itemdata["route_long_name"] = pdRoutes["route_long_name"][i]
     else:
       itemdata["route_long_name"] = "[ UNNAMED ROUTE ]"
     itemdata["route_type"] = pdRoutes["route_type"][i]
