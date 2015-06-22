@@ -492,6 +492,11 @@ $("#agency").change(function() {
 	loadRoutes();
 });
 
+// Event Handler on Route Select, Load Trip Data
+$("#route").change(function() {
+	alert('trip data');
+});
+
 // Initialize Google Maps DOM on Page Load
 google.maps.event.addDomListener(window, 'load', initMap());
 
