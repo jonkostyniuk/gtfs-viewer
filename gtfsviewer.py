@@ -55,6 +55,16 @@ DATA_FOLDER = "./data/"
 # DEFINITIONS
 # -----------
 
+# GTFS Feed Variables
+gtfsFeeds = [
+  {
+    "name": "TransitFeeds",
+    "url": "http://api.transitfeeds.com/v1/",
+    "api-key": "0d8f7e0c-2f6d-4180-b824-242a44658b03"
+  }
+]
+
+
 # SQLite Database Variables
 #dbConn = None
 
@@ -172,7 +182,7 @@ def readRoutes(filepath):
   listRoutes = []
   for i in range(numRt):
     itemdata = {}
-    itemdata["route_id"] = str(pdRoutes["route_id"][i])#.replace("\xef\xbb\xbf", "")
+    itemdata["route_id"] = str(pdRoutes["route_id"][i])
     itemdata["route_short_name"] = pdRoutes["route_short_name"][i]
     if pdRoutes["route_long_name"][i] != "":
       itemdata["route_long_name"] = pdRoutes["route_long_name"][i]
