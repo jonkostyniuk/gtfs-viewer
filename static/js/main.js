@@ -497,6 +497,9 @@ $("#route").change(function() {
 	alert('trip data');
 });
 
+// Initialize Date/Time Picker
+$("#datetime").datetimepicker();
+
 // Initialize Google Maps DOM on Page Load
 google.maps.event.addDomListener(window, 'load', initMap());
 

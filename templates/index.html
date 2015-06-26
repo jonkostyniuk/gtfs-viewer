@@ -14,6 +14,7 @@
 
     <!-- STYLESHEET FILE REFERENCES -->
     <link href="css/bootstrap-3.3.4.min.css" rel="stylesheet" />
+    <link href="css/bootstrap-datetimepicker-4.14.30.min.css" rel="stylesheet" />
     <link href="css/main.css" rel="stylesheet" />
   </head>
   <body>
@@ -22,30 +23,36 @@
         <h1>GTFS Transit Route Viewer</h1>
         <p class="lead">View GTFS data within Google Maps</p>
       </div><!-- END Header -->
-
       <div class="row">
         <div class="col-md-3" id="sidebar">
-          <h2>Select Variables</h2>
-            <p>Agency: <a tabindex="0" role="button" data-toggle="popover" data-trigger="focus" data-placement="bottom" data-content="Select an agency GTFS transit feed from the GTFS Exchange, external reference ZIP link, upload ZIP file, or preloaded agencies previously selected. Preloaded agencies on this machine in this browser will expire after 24 hours."><span class="glyphicon glyphicon-question-sign" aria-hidden="true"></span></a><br />
+          <h2>Select Agency <a tabindex="0" role="button" data-toggle="popover" data-trigger="focus" data-placement="bottom" data-content="Select an agency GTFS transit feed from the GTFS Exchange, external reference ZIP link, upload ZIP file, or preset agencies previously selected. Preloaded agencies on this machine in this browser will expire after 24 hours."><span class="glyphicon glyphicon-question-sign" aria-hidden="true"></span></a></h2>
+            <p>Agency Preset:<br />
               <select class="form-control" id="agency">
                 <option value="null">[ Select Preloaded GTFS ]</option>
               </select>
             </p>
             <p>
-              <button class="btn btn-primary" id="select-feed">Select Feed</button>
-              <button class="btn btn-primary" id="select-zip">Upload GTFS</button>
+              <button class="btn btn-default" id="select-feed">Select Feed</button>
+              <button class="btn btn-default" id="select-zip">Upload GTFS</button>
             </p>
-            <hr style="border: 1px solid #999999;" />
-            <p>Route: <span class="glyphicon glyphicon-question-sign" aria-hidden="true"></span><br />
+          <hr style="border: 1px solid #999999;" />
+          <h2>Select Route Info <a tabindex="0" role="button" data-toggle="popover" data-trigger="focus" data-placement="bottom" data-content="Select a transit route and date/time to view the bus route on the adjacent map. The next route start time will be displayed following the date and time selected below."><span class="glyphicon glyphicon-question-sign" aria-hidden="true"></span></a></h2>
+            <p>Route ID:<br />
               <select class="form-control" id="route" disabled>
                 <option value="NULL">[ Select Route ]</option>
               </select>
             </p>
-            <p>Trip: <span class="glyphicon glyphicon-question-sign" aria-hidden="true"></span><br />
-              <select class="form-control" id="trip" disabled>
-                <option value="NULL">[ Select Trip ID ]</option>
-              </select>
+            <p>Route Date/Time:<br />
+              <div class="form-group">
+                <div class="input-group date" id="datetime">
+                    <input type="text" class="form-control" />
+                    <span class="input-group-addon">
+                        <span class="glyphicon glyphicon-calendar"></span>
+                    </span>
+                </div>
+              </div>
             </p>
+            <p><button type="button" class="btn btn-primary" id="create-map" disabled=true>Create Map</button></p>
             <p>
               <a id="remuuid">remove uuid</a><br />
               <span id="testout" style="color: #999999">--</span>
@@ -57,7 +64,7 @@
         </div>
         <div class="col-md-3" id="gtfs-output">
           <h2>Agency Output:</h2>
-          <p><span id="agency-out">--</span></p>
+          <p><span id="agency-out">--</span> specify start and end dates</p>
           <h2>Route Output:</h2>
           <p><span id="route-out">--</span></p>
         </div>
@@ -135,6 +142,8 @@
     <!-- JAVASCRIPT FILE REFERENCES -->
     <script src="js/jquery-1.11.2.min.js"></script>
     <script src="js/bootstrap-3.3.4.min.js"></script>
+    <script src="js/moment-2.10.3.min.js"></script>
+    <script src="js/bootstrap-datetimepicker-4.14.30.min.js"></script>
     <script src="https://maps.googleapis.com/maps/api/js?v=3.exp"></script>
     <script src="js/spin-2.3.1.min.js"></script>
     <!--<script src="js/jquery.validate-1.13.1.min.js"></script>-->

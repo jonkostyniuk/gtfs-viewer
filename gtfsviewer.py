@@ -47,7 +47,7 @@ import zipfile
 # -------------------------
 
 # Initialize
-global DATA_FOLDER		   # GTFS Server Side Data Folder
+global DATA_FOLDER		  # GTFS Server Side Data Folder
 
 # Define
 DATA_FOLDER = "./data/"
@@ -56,7 +56,7 @@ DATA_FOLDER = "./data/"
 # -----------
 
 # GTFS Feed Variables
-gtfsFeeds = [
+gtfsFeeds = [           # GTFS Feed Sources, URLs, and API Keys
   {
     "name": "TransitFeeds",
     "url": "http://api.transitfeeds.com/v1/",
@@ -144,6 +144,8 @@ def getRoutes(uuid, AgencyID):
   jsondata["agency_id"] = int(AgencyID)
   # Get Full Agency Information to Display
   jsondata["agency_info"] = readAgency(datapath)
+  # Get Start and End Calendar Dates
+  jsondata["calendar_dates"] = readCalendarExt(datapath)
   # Get Required Route Fields to Display
   jsondata["data"] = readRoutes(datapath)
   # Indicate JSON Data Success
@@ -169,6 +171,15 @@ def readAgencyName(filepath):
 
   return pdAgency["agency_name"][0]
 
+# Function to Read Calendar Extent Dates
+def readCalendarExt(filepath):
+  # Read Regular Calendar Data
+  pdCalendar = pd.read_csv(filepath + "calendar.txt", encoding="utf-8-sig")
+  sDate = pdCalendar.min()["start_date"]
+  eDate = pdCalendar.max()["end_date"]
+  
+  return {"start": sDate, "end": eDate}
+
 # Function to Read Routes File
 def readRoutes(filepath):
   # Prepare Route Data
@@ -193,7 +204,7 @@ def readRoutes(filepath):
 
   return listRoutes
 
-# Function to Extract GTFS ZIP to Temporary Folder
+# Function to Extract GTFS ZIP to Temporary Folder [UNFINISHED]
 def unzipGTFS(fileloc):
   # Open ZIP Archive Location
   zf = zipfile.ZipFile(gtfsSource)
