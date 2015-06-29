@@ -36,7 +36,7 @@
               <button class="btn btn-default" id="select-zip">Upload GTFS</button>
             </p>
           <hr style="border: 1px solid #999999;" />
-          <h2>Select Route Info <a tabindex="0" role="button" data-toggle="popover" data-trigger="focus" data-placement="bottom" data-content="Select a transit route and date/time to view the bus route on the adjacent map. The next route start time will be displayed following the date and time selected below."><span class="glyphicon glyphicon-question-sign" aria-hidden="true"></span></a></h2>
+          <h2>Select Route Info <a tabindex="0" role="button" data-toggle="popover" data-trigger="focus" data-placement="bottom" data-content="Select a transit route and date/time to view the bus route on the adjacent map. The path of the next trip in the route following the date and time selected below will be displayed."><span class="glyphicon glyphicon-question-sign" aria-hidden="true"></span></a></h2>
             <p>Route ID:<br />
               <select class="form-control" id="route" disabled>
                 <option value="NULL">[ Select Route ]</option>
@@ -45,7 +45,7 @@
             <p>Route Date/Time:<br />
               <div class="form-group">
                 <div class="input-group date" id="datetime">
-                    <input type="text" class="form-control" />
+                    <input type="text" class="form-control" id="rtdatetime" />
                     <span class="input-group-addon">
                         <span class="glyphicon glyphicon-calendar"></span>
                     </span>
@@ -63,9 +63,11 @@
           <p>Please check internet connection!</p>
         </div>
         <div class="col-md-3" id="gtfs-output">
-          <h2>Agency Output:</h2>
-          <p><span id="agency-out">--</span> specify start and end dates</p>
-          <h2>Route Output:</h2>
+          <h2>Agency Information:</h2>
+          <p><span id="agency-out">--</span></p>
+          <h2>Calendar Information:</h2>
+          <p><span id="calendar-out">--</span></p>
+          <h2>Route Information:</h2>
           <p><span id="route-out">--</span></p>
         </div>
       </div><!-- END Main Content -->

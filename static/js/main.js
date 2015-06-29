@@ -169,6 +169,7 @@ function loadRoutes() {
 				// Save Routes Data and Enable Routes Dropdown
 				$RoutesData = $data;
 				$("#route").prop("disabled", false);
+				$("#datetime").children().prop("disabled", false);
 
 				// Load Agency Dropdown Data
 				var RouteOpt = {}
@@ -184,6 +185,12 @@ function loadRoutes() {
 				$AgencyInfo += "<a href='" + $RoutesData["agency_info"]["url"] + "' target='_blank'>";
 				$AgencyInfo += $RoutesData["agency_info"]["url"] + "</a>";
 				$("#agency-out").html($AgencyInfo);
+
+				// Load Calendar Info Output
+				$CalendarInfo = ISOtoLongDate($RoutesData["calendar_dates"]["start"].toString()) + "<br />";
+				$CalendarInfo += "to<br />";
+				$CalendarInfo += ISOtoLongDate($RoutesData["calendar_dates"]["end"].toString()) + "<br />";
+				$("#calendar-out").html($CalendarInfo);
 			},
 		    error: function ($jqXHR, $textStatus, $errorThrown) {
 	            if ($jqXHR.status == 500) {
@@ -197,10 +204,13 @@ function loadRoutes() {
 	else { // If no valid agency is selected
 		// Disable Routes Dropdown on NULL
 		$("#route").prop("disabled", true);
+		$("#datetime").children().prop("disabled", true);
 		// Clear Dropdown List and Add Null Option
 		$("#route").empty();
 		$("#route").append(new Option("[ Select Route ]","NULL"));
 		$("#agency-out").html("--");
+		$("#calendar-out").html("--");
+		$("#rtdatetime").val("");
 	}
 
     return;
@@ -358,6 +368,22 @@ function aIsOfficial($isOfficial) {
 	}	
 }
 
+// Function to Convert ISO Date String to Long Date Format
+function ISOtoLongDate($isostr) {
+	// Check for ISO String Format
+	if($isostr.length == 8 || $isostr.length == 10) {
+		if($isostr.length == 8) {
+			$isostr = insertStr(insertStr($isostr, 6, "-"), 4, "-");
+		}
+		// Convert to Long Date Format
+		$longdate = new Date($isostr);
+		return $longdate.toDateString();
+	}
+	else {
+		return "!ERROR";
+	}
+}
+
 // Function to Parse GTFS Data
 function parseGTFS($gtfsjson) {
 	$AgencyData = $gtfsjson; // Save Active GTFS Global Object
@@ -388,6 +414,11 @@ function removeUUID() {
 	alert("UUID is " + localStorage.getItem("uuid"));
 
 	return;
+}
+
+// Function to Insert Into String
+function insertStr(str, index, value) {
+    return str.substr(0, index) + value + str.substr(index);
 }
 
 
@@ -497,8 +528,13 @@ $("#route").change(function() {
 	alert('trip data');
 });
 
-// Initialize Date/Time Picker
-$("#datetime").datetimepicker();
+// Initialize Route Date/Time Picker
+$("#datetime").datetimepicker({
+	//defaultDate: new Date("2015-07-01"),
+	minDate: new Date("2015-07-01"),
+	maxDate: new Date("2015-07-31")
+});
+$("#datetime").children().prop("disabled", true);
 
 // Initialize Google Maps DOM on Page Load
 google.maps.event.addDomListener(window, 'load', initMap());
