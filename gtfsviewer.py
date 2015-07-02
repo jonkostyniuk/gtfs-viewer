@@ -30,6 +30,7 @@
 # ----------------
 
 #import csv
+import datetime as dt
 import json
 import os
 import pandas as pd
@@ -98,6 +99,33 @@ GTFS_API = "http://www.gtfs-data-exchange.com/api/agencies" # GTFS Exchange API 
 
 # MODULE FUNCTIONS
 # ----------------
+
+# Function to Create Trip Map
+def createTripMap(uuid, AgencyID, RouteID, datetime):
+  # Define UUID and Preset Agency Folder Path
+  datapath = DATA_FOLDER + str(uuid) + "/" + str(AgencyID) + "/"
+  jsondata = {}
+  jsondata["uuid"] = str(uuid)
+  jsondata["agency_id"] = int(AgencyID)
+  jsondata["route_id"] = RouteID
+
+  # Split Date and Time Data
+  trDate = datetime.split(", ")[0]
+  trTime = datetime.split(", ")[1]
+
+  # Convert Date to GTFS Format
+  trDate = dt.datetime.strptime(trDate, "%a %b %d %Y").strftime("%Y%m%d")
+  #datetime.datetime.strptime("2013-1-25", '%Y-%m-%d').strftime('%m/%d/%y')
+
+  ## CREATE TRIP MAP STUFF HERE WITH PANDAS
+  jsondata["datetime"] = trDate ##TEMP
+
+
+
+  # Indicate JSON Data Success
+  jsondata["success"] = "true"
+
+  return json.dumps(jsondata)
 
 # Function to Create Unique User ID
 def createUUID():

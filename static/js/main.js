@@ -37,6 +37,7 @@ var $ZipType = null;												// ZIP Radio - URL or File
 // Loaded Agency Variables
 var $AgencyPreset = null;											// JSON Object for User Agency Preset Data
 var $RoutesData = null;												// JSON Object for Agency Route Data
+var $TripData = null;												// JSON Object for Route Trip Data
 
 // GUI Variables
 var $diaName = null;												// Name of Dialogue Window Open
@@ -88,6 +89,39 @@ function clearUpload() {
 	$('#upload-ZIP').prop('disabled', true); // Disable submit button
 	$('#mUploadZIP').modal('hide'); // Hide dialogue
 	$diaName = null; // Clear active dialogue name
+
+	return;
+}
+
+// Function to Create Trip Map from Route Data
+function createTripMap() {
+	if($("#route").val() != "NULL") {
+		var $reqData = {
+			"uuid": $UUID,
+			"agency_id": $('#agency').val().split("aID_")[1],
+			"route_id": $("#route").val().split("rtID_")[1],
+			"datetime": $("#rtdatetime").val()
+		}
+		// AJAX Call and JSON Response
+		$.ajax({
+			url: "./api/createmap",
+			method: "POST",
+			contentType: "application/json",
+			data: JSON.stringify($reqData),
+			dataType: "json",
+			success: function($data) {
+				$TripData = $data;
+			},
+		    error: function ($jqXHR, $textStatus, $errorThrown) {
+	            if ($jqXHR.status == 500) {
+	            	alert("Internal error: " + $jqXHR.responseText);
+	            } else {
+	            	alert("Unexpected error!!");
+	            }
+	        }
+		});
+	}
+	else alert("ERROR: Please select transit route!!");
 
 	return;
 }
@@ -167,10 +201,11 @@ function loadRoutes() {
 			data: JSON.stringify($reqData),
 			dataType: "json",
 			success: function($data) {
-				// Save Routes Data and Enable Routes Dropdown
+				// Save Routes Data and Enable Routes Fields
 				$RoutesData = $data;
 				$("#route").prop("disabled", false);
 				$("#datetime").children().prop("disabled", false);
+				$("#create-map").prop("disabled", false);
 
 				// Clear Date/Time Selector Data
 				$("#datetime").data("DateTimePicker").defaultDate(false);
@@ -216,6 +251,7 @@ function loadRoutes() {
 		// Disable Routes Dropdown on NULL
 		$("#route").prop("disabled", true);
 		$("#datetime").children().prop("disabled", true);
+		$("#create-map").prop("disabled", true);
 		
 		// Clear Dropdown List and Add Null Option
 		$("#route").empty();
@@ -447,6 +483,11 @@ function insertStr(str, index, value) {
 
 // When HTML Document Loaded, Add Event Listeners Here
 $(document).ready(function() {
+	// Event Handler to Create Map from Route Data
+	$("#create-map").on("click", function (e) {
+		createTripMap();
+	});	
+
 	// Event Handler to Load Selected Agency ZIP on Click
 	$("#load-agency").on("click", function (e) {
 		loadAgency();
@@ -542,15 +583,10 @@ $("#agency").change(function() {
 	loadRoutes();
 });
 
-// Event Handler on Route Select, Load Trip Data
-$("#route").change(function() {
-	alert('trip data');
-});
-
 // Initialize Route Date/Time Picker
 $("#datetime").datetimepicker({
-	//defaultDate: new Date("2015-07-01"),
 	format: "ddd MMM DD YYYY, HH:mm"
+	//defaultDate: new Date("2015-07-01"),
 	//minDate: new Date("2015-07-01 00:00"),
 	//maxDate: new Date("2015-07-31 23:59")
 });

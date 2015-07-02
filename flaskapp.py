@@ -69,12 +69,17 @@ def apiAgencies():
 	return gv.getAgencies(fl.request.json["uuid"])
 	#return gv.getAgencies(fl.request.args.get("uuid")) ## WORKS FOR 'GET'
 
+# Function to Get Trip Map
+@app.route("/api/createmap", methods=["POST"])
+def apiCreateMap():
+	return gv.createTripMap(fl.request.json["uuid"], fl.request.json["agency_id"], fl.request.json["route_id"], fl.request.json["datetime"])
+
 # Function to Get GTFS Exchange Feed
 @app.route("/api/gtfs", methods=["GET"])
 def apiGTFS():
     return gv.getGTFS()
 
-# Function to Agency Route Data
+# Function to Get Agency Route Data
 @app.route("/api/routes", methods=["POST"])
 def apiRoutes():
 	return gv.getRoutes(fl.request.json["uuid"], fl.request.json["agency_id"])
