@@ -41,6 +41,7 @@ var $RoutesData = null;												// JSON Object for Agency Route Data
 // GUI Variables
 var $diaName = null;												// Name of Dialogue Window Open
 var $UUID = null;													// Client Side Unique User ID
+var $TimeOffset = new Date().getTimezoneOffset();					// Timezone Offset in Minutes
 
 // AJAX Loading 'spin.js' Variables
 var opts = { 														// Set Spin Options
@@ -55,7 +56,7 @@ var opts = { 														// Set Spin Options
    shadow: true, // Whether to render a shadow
    hwaccel: false, // Whether to use hardware acceleration
    className: 'spinner', // The CSS class to assign to the spinner
-   zIndex: 10000, // The z-index (defaults to 2000000000)
+   zIndex: 2000000000, // The z-index (defaults to 2000000000)
    top: 'auto', // Top position relative to parent in px
    left: 'auto' // Left position relative to parent in px
 };
@@ -171,6 +172,11 @@ function loadRoutes() {
 				$("#route").prop("disabled", false);
 				$("#datetime").children().prop("disabled", false);
 
+				// Clear Date/Time Selector Data
+				$("#datetime").data("DateTimePicker").defaultDate(false);
+				$("#datetime").data("DateTimePicker").minDate(false);
+				$("#datetime").data("DateTimePicker").maxDate(false);
+
 				// Load Agency Dropdown Data
 				var RouteOpt = {}
 				for(var $i = 0; $i < $RoutesData["data_count"]; $i++) {
@@ -191,6 +197,11 @@ function loadRoutes() {
 				$CalendarInfo += "to<br />";
 				$CalendarInfo += ISOtoLongDate($RoutesData["calendar_dates"]["end"].toString()) + "<br />";
 				$("#calendar-out").html($CalendarInfo);
+
+				// Set Date/Time Selector Min/Max/Default Values
+				$("#datetime").data("DateTimePicker").defaultDate(new Date(ISOtoLongDate($RoutesData["calendar_dates"]["start"].toString()) + " 00:00"));
+				$("#datetime").data("DateTimePicker").minDate(new Date(ISOtoLongDate($RoutesData["calendar_dates"]["start"].toString()) + " 00:00"));
+				$("#datetime").data("DateTimePicker").maxDate(new Date(ISOtoLongDate($RoutesData["calendar_dates"]["end"].toString()) + " 23:59"));
 			},
 		    error: function ($jqXHR, $textStatus, $errorThrown) {
 	            if ($jqXHR.status == 500) {
@@ -205,12 +216,20 @@ function loadRoutes() {
 		// Disable Routes Dropdown on NULL
 		$("#route").prop("disabled", true);
 		$("#datetime").children().prop("disabled", true);
+		
 		// Clear Dropdown List and Add Null Option
 		$("#route").empty();
 		$("#route").append(new Option("[ Select Route ]","NULL"));
-		$("#agency-out").html("--");
-		$("#calendar-out").html("--");
+
+		// Clear Date/Time Selector Data
+		$("#datetime").data("DateTimePicker").defaultDate(false);
+		$("#datetime").data("DateTimePicker").minDate(false);
+		$("#datetime").data("DateTimePicker").maxDate(false);
 		$("#rtdatetime").val("");
+
+		// Clear Output Data
+		$("#agency-out").html("--");
+		$("#calendar-out").html("--");		
 	}
 
     return;
@@ -426,7 +445,7 @@ function insertStr(str, index, value) {
 // MAIN PROGRAM
 // ##########################################################################################################
 
-// When HTML Document Loaded, Add Listeners Here
+// When HTML Document Loaded, Add Event Listeners Here
 $(document).ready(function() {
 	// Event Handler to Load Selected Agency ZIP on Click
 	$("#load-agency").on("click", function (e) {
@@ -503,7 +522,7 @@ $(document).on("change", "input[name='ziptype']:radio", function() {
 	}
 });
 
-// Global functions to show/hide on ajax requests
+// Global functions to show/hide spinner on ajax requests
 $(document).ajaxStart(function() {
    $("<div id='spinner_center' style='position:fixed;top:70px;left:49%;'>&nbsp;</div>").appendTo("body");
    spinner.spin($("#spinner_center")[0]);
@@ -531,8 +550,9 @@ $("#route").change(function() {
 // Initialize Route Date/Time Picker
 $("#datetime").datetimepicker({
 	//defaultDate: new Date("2015-07-01"),
-	minDate: new Date("2015-07-01"),
-	maxDate: new Date("2015-07-31")
+	format: "ddd MMM DD YYYY, HH:mm"
+	//minDate: new Date("2015-07-01 00:00"),
+	//maxDate: new Date("2015-07-31 23:59")
 });
 $("#datetime").children().prop("disabled", true);
 
