@@ -111,11 +111,11 @@ def createTripMap(uuid, AgencyID, RouteID, datetime):
 
   # Split Date and Time Data
   trDate = datetime.split(", ")[0]
-  trTime = datetime.split(", ")[1]
+  trTime = datetime.split(", ")[1] + ":00"
 
-  # Convert Date to GTFS Format
-  trDate = dt.datetime.strptime(trDate, "%a %b %d %Y").strftime("%Y%m%d")
-  #datetime.datetime.strptime("2013-1-25", '%Y-%m-%d').strftime('%m/%d/%y')
+
+
+
 
   ## CREATE TRIP MAP STUFF HERE WITH PANDAS
   jsondata["datetime"] = trDate ##TEMP
@@ -186,6 +186,35 @@ def getRoutes(uuid, AgencyID):
 # HELPER (MONKEY) FUNCTIONS
 # -------------------------
 
+# Function to Convert Date Format
+def convDateFormat(longdate):
+  return dt.datetime.strptime(longdate, "%a %b %d %Y").strftime("%Y%m%d")
+
+# Function to Convert Time to Seconds
+def convTimeSecs(hhmmss):
+  # Split Hours/Minutes/Seconds
+  hhmmss = hhmmss.split(":")
+  # Set and Cumulate Time Seconds
+  timesecs = 0
+  # Add Hour Seconds
+  timesecs += int(hhmmss[0]) * 60 * 60
+  # Add Minute Seconds
+  timesecs += int(hhmmss[1]) * 60
+  # Add Remaining Seconds
+  timesecs += int(hhmmss[2])
+
+  return timesecs
+
+# Function to Get Service ID
+def getServiceID(filepath, trdate):
+  # Lookup Calendar Day of Week and Get Service ID 
+  pdCalendar = pd.read_csv(filepath + "calendar.txt", encoding="utf-8-sig")
+
+
+
+
+  return 'test'
+
 # Function to Read Agency Info
 def readAgency(filepath):
   pdAgency = pd.read_csv(filepath + "agency.txt", encoding="utf-8-sig")
@@ -239,10 +268,6 @@ def unzipGTFS(fileloc):
 
   # Loop through ZIP File Names
   #for filename in zf.namelist():
-
-
-
-
 
 
 # ##########################################################################################################
