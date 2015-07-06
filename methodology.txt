@@ -1,7 +1,7 @@
-- convert times to seconds
-- determine routeid from routes data
-- lookup date from calendar data, need to add exception for calendar dates later
-- get serviceid from calendar data
+X convert times to seconds
+X determine routeid from routes data
+X lookup date from calendar data, need to add exception for calendar dates later
+X get serviceid from calendar data
 - in trips data, use service id and route id to get plural trip ids
 - in stop times data find trip id with 'stop sequence 1' that is greater than or equal to desired time, get trip id
 - using specified trip id in trip data, get shape id

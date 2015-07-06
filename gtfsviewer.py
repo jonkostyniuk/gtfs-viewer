@@ -115,6 +115,8 @@ def createTripMap(uuid, AgencyID, RouteID, datetime):
 
 
 
+  jsondata["testout"] = getServiceID(datapath, trDate)#confirm usage, START HERE!!
+
 
 
   ## CREATE TRIP MAP STUFF HERE WITH PANDAS
@@ -188,7 +190,11 @@ def getRoutes(uuid, AgencyID):
 
 # Function to Convert Date Format
 def convDateFormat(longdate):
-  return dt.datetime.strptime(longdate, "%a %b %d %Y").strftime("%Y%m%d")
+  return int(dt.datetime.strptime(longdate, "%a %b %d %Y").strftime("%Y%m%d"))
+
+# Function to Convert Day of Week to Long
+def convLongDoW(longdate): 
+  return dt.datetime.strptime(longdate, "%a %b %d %Y").strftime("%A").lower()
 
 # Function to Convert Time to Seconds
 def convTimeSecs(hhmmss):
@@ -207,13 +213,31 @@ def convTimeSecs(hhmmss):
 
 # Function to Get Service ID
 def getServiceID(filepath, trdate):
+  # Convert Format of Variables
+  dow = convLongDoW(trdate) # Convert to Long Day of Week
+  numdate = convDateFormat(trdate) # Convert to Numeric Date Value
   # Lookup Calendar Day of Week and Get Service ID 
   pdCalendar = pd.read_csv(filepath + "calendar.txt", encoding="utf-8-sig")
+  calsel = pdCalendar[(pdCalendar[dow] == 1) & (pdCalendar["start_date"] <= numdate) & (pdCalendar["end_date"] >= numdate)].transpose().to_dict()
+  # Lookup Calendar Dates Exceptions for Current Date
+  pdCalDates = pd.read_csv(filepath + "calendar_dates.txt", encoding="utf-8-sig")  
+  excsel = pdCalDates[(pdCalDates["date"] == numdate)].transpose().to_dict()
+  # Create Valid Service ID List for Application
+  lServiceID = [] # List to Hold Valid Service IDs
+  for i in calsel.keys():
+    lServiceID.append(calsel[i]["service_id"]) # Append Current Service ID Value
+  # Add/Remove Exception Service IDs
+  for i in excsel.keys():
+    if excsel[i]["exception_type"] == 1: # Add Exception Service ID
+      lServiceID.append(excsel[i]["service_id"]) # Append Current Service ID Value
+    elif excsel[i]["exception_type"] == 2: # Remove Exception Service ID
+      for j in range(len(lServiceID)):
+        if excsel[i]["service_id"] == lServiceID[j]:
+          lServiceID[j] = -1 # Set Exception Removal Flag
+  # Drop Removal Flags
+  lServiceID = filter(lambda a: a != -1, lServiceID)
 
-
-
-
-  return 'test'
+  return lServiceID
 
 # Function to Read Agency Info
 def readAgency(filepath):

@@ -431,7 +431,7 @@ function ISOtoLongDate($isostr) {
 			$isostr = insertStr(insertStr($isostr, 6, "-"), 4, "-");
 		}
 		// Convert to Long Date Format
-		$longdate = new Date($isostr);
+		$longdate = new Date($isostr + " 00:00");
 		return $longdate.toDateString();
 	}
 	else {
