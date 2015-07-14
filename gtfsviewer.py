@@ -113,15 +113,19 @@ def createTripMap(uuid, AgencyID, RouteID, datetime):
   trDate = datetime.split(", ")[0]
   trTime = datetime.split(", ")[1] + ":00"
 
+  # Get Valid Service ID List for Date/Time
+  lServiceID = getServiceID(datapath, trDate)#confirm usage, START HERE!!
+  # Get Valid Trip ID List from Route and Service IDs
+  lTripID = getTripID(datapath, RouteID, lServiceID)
+  # Find Trip ID Sequence Based on Arrival Time of First Stop, Return Sequence
+  lStopSeq = getStopSeq(datapath, lTripID, trTime)
 
-
-  jsondata["testout"] = getServiceID(datapath, trDate)#confirm usage, START HERE!!
-
+  jsondata["testout"] = lStopSeq
 
 
   ## CREATE TRIP MAP STUFF HERE WITH PANDAS
   jsondata["datetime"] = trDate ##TEMP
-
+  #### NEED VALIDATION FOR EMPTY LISTS
 
 
   # Indicate JSON Data Success
@@ -147,11 +151,14 @@ def getAgencies(uuid):
     listPreset = os.listdir(uuidpath)
     # Populate preset data list
     for listitem in listPreset:
-      itemdata = {}
-      itemdata["timestamp"] = int(listitem)
-      itemdata["agency_name"] = readAgencyName(uuidpath + "/" + listitem + "/")
-      jsondata["data"].append(itemdata)
-      dataCount += 1
+      try: # Enables only timestamp directories to be fetched, others skipped
+        itemdata = {}
+        itemdata["timestamp"] = int(listitem)
+        itemdata["agency_name"] = readAgencyName(uuidpath + "/" + listitem + "/")
+        jsondata["data"].append(itemdata)
+        dataCount += 1
+      except:
+        pass
   # Create directory for UUID
   else:
     os.makedirs(uuidpath)
@@ -199,7 +206,7 @@ def convLongDoW(longdate):
 # Function to Convert Time to Seconds
 def convTimeSecs(hhmmss):
   # Split Hours/Minutes/Seconds
-  hhmmss = hhmmss.split(":")
+  hhmmss = str(hhmmss).strip().split(":")
   # Set and Cumulate Time Seconds
   timesecs = 0
   # Add Hour Seconds
@@ -211,7 +218,7 @@ def convTimeSecs(hhmmss):
 
   return timesecs
 
-# Function to Get Service ID
+# Function to Get Service IDs
 def getServiceID(filepath, trdate):
   # Convert Format of Variables
   dow = convLongDoW(trdate) # Convert to Long Day of Week
@@ -238,6 +245,34 @@ def getServiceID(filepath, trdate):
   lServiceID = filter(lambda a: a != -1, lServiceID)
 
   return lServiceID
+
+# Function to Get Stop Sequence
+def getStopSeq(filepath, trid, trtime):
+  # Lookup Trip ID and Stop Times Sequence
+  pdStopTimes = pd.read_csv(filepath + "stop_times.txt", encoding="utf-8-sig")
+  # Lookup Valid Stop Sequence
+  selstseq = pdStopTimes[(pdStopTimes["trip_id"].isin(trid)) & (pdStopTimes["stop_sequence"] == 1)]
+
+  print selstseq.head()
+
+  #selstseq.ix[:, "arrival_time"] = convTimeSecs(selstseq.ix[:, "arrival_time"])
+
+  print trtime
+
+
+  lStopSeq = []
+
+  return lStopSeq
+
+# Function to Get Trip IDs
+def getTripID(filepath, rtid, srvid):
+  # Lookup Calendar Day of Week and Get Service ID 
+  pdTrips = pd.read_csv(filepath + "trips.txt", encoding="utf-8-sig")
+  # Lookup Valid Trip IDs
+  tripsel = pdTrips[(pdTrips["service_id"].isin(srvid)) & (pdTrips["route_id"] == rtid)]
+  lTripID = tripsel["trip_id"].tolist()
+
+  return lTripID
 
 # Function to Read Agency Info
 def readAgency(filepath):
