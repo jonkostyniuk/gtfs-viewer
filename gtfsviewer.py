@@ -118,9 +118,11 @@ def createTripMap(uuid, AgencyID, RouteID, datetime):
   # Get Valid Trip ID List from Route and Service IDs
   lTripID = getTripID(datapath, RouteID, lServiceID)
   # Find Trip ID Sequence Based on Arrival Time of First Stop, Return Sequence
-  lStopSeq = getStopSeq(datapath, lTripID, trTime)
+  pdStopSeq = getStopSeq(datapath, lTripID, trTime)
 
-  jsondata["testout"] = lStopSeq
+  ####### START HERE
+
+  jsondata["testout"] = []
 
 
   ## CREATE TRIP MAP STUFF HERE WITH PANDAS
@@ -206,7 +208,7 @@ def convLongDoW(longdate):
 # Function to Convert Time to Seconds
 def convTimeSecs(hhmmss):
   # Split Hours/Minutes/Seconds
-  hhmmss = str(hhmmss).strip().split(":")
+  hhmmss = hhmmss.strip().split(":")
   # Set and Cumulate Time Seconds
   timesecs = 0
   # Add Hour Seconds
@@ -250,19 +252,18 @@ def getServiceID(filepath, trdate):
 def getStopSeq(filepath, trid, trtime):
   # Lookup Trip ID and Stop Times Sequence
   pdStopTimes = pd.read_csv(filepath + "stop_times.txt", encoding="utf-8-sig")
-  # Lookup Valid Stop Sequence
+  # Lookup Valid Stop Sequence and Convert Arrival Time to Seconds
   selstseq = pdStopTimes[(pdStopTimes["trip_id"].isin(trid)) & (pdStopTimes["stop_sequence"] == 1)]
+  dfTimeCol = selstseq["arrival_time"] # Temp Variable to Hold Time Data
+  dfTimeCol = dfTimeCol.str.strip() # Strip Whitespace
+  dfTimeCol = dfTimeCol.str.split(":") # Split Time Values between ':'  
+  #### CAVEAT - POTENTIAL ISSUE, USE .loc, next line
+  selstseq["arrival_time"] = (dfTimeCol.str[0].astype("int") * 3600) + (dfTimeCol.str[1].astype("int") * 60) +  dfTimeCol.str[2].astype("int") # Convert to Seconds
+  selstseq = selstseq[(selstseq["arrival_time"] >= convTimeSecs(trtime))]
+  selstseq = selstseq.loc[selstseq["arrival_time"].idxmin(),:]
+  pdStopSeq = pdStopTimes[(pdStopTimes["trip_id"] == selstseq["trip_id"])]
 
-  print selstseq.head()
-
-  #selstseq.ix[:, "arrival_time"] = convTimeSecs(selstseq.ix[:, "arrival_time"])
-
-  print trtime
-
-
-  lStopSeq = []
-
-  return lStopSeq
+  return pdStopSeq
 
 # Function to Get Trip IDs
 def getTripID(filepath, rtid, srvid):
