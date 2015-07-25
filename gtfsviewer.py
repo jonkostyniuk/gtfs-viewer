@@ -119,7 +119,11 @@ def createTripMap(uuid, AgencyID, RouteID, datetime):
   lTripID = getTripID(datapath, RouteID, lServiceID)
   # Find Trip ID Sequence Based on Arrival Time of First Stop, Return Sequence
   pdStopSeq = getStopSeq(datapath, lTripID, trTime)
+  # Get Shape ID from Trip ID
+  ShpID = getShapeID(datapath, pdStopSeq["trip_id"][0])
 
+
+  print ShpID
   ####### START HERE
 
   jsondata["testout"] = []
@@ -220,6 +224,16 @@ def convTimeSecs(hhmmss):
 
   return timesecs
 
+# Function to Get Shape ID
+def getShapeID(filepath, tripid):
+  pdTrips = pd.read_csv(filepath + "trips.txt", encoding="utf-8-sig")
+  tripsel = pdTrips[(pdTrips["trip_id"] == tripid)].reset_index(drop=True)
+  if len(tripsel) == 1:
+    shpid = tripsel["shape_id"][0]
+    return shpid
+  else:
+    return -1
+
 # Function to Get Service IDs
 def getServiceID(filepath, trdate):
   # Convert Format of Variables
@@ -263,7 +277,7 @@ def getStopSeq(filepath, trid, trtime):
   selstseq = selstseq.loc[selstseq["arrival_time"].idxmin(),:]
   pdStopSeq = pdStopTimes[(pdStopTimes["trip_id"] == selstseq["trip_id"])]
 
-  return pdStopSeq
+  return pdStopSeq.reset_index(drop=True)
 
 # Function to Get Trip IDs
 def getTripID(filepath, rtid, srvid):
