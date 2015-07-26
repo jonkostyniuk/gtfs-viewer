@@ -114,19 +114,62 @@ def createTripMap(uuid, AgencyID, RouteID, datetime):
   trTime = datetime.split(", ")[1] + ":00"
 
   # Get Valid Service ID List for Date/Time
-  lServiceID = getServiceID(datapath, trDate)#confirm usage, START HERE!!
+  try:
+    lServiceID = getServiceID(datapath, trDate)
+    jsondata["service_id"] = lServiceID # Audit Trail
+    success = True
+  except:
+    jsondata["service_id"] = [] # Audit Trail
+    success = False
+
   # Get Valid Trip ID List from Route and Service IDs
-  lTripID = getTripID(datapath, RouteID, lServiceID)
-  # Find Trip ID Sequence Based on Arrival Time of First Stop, Return Sequence
-  pdStopSeq = getStopSeq(datapath, lTripID, trTime)
-  # Get Shape ID from Trip ID
-  ShpID = getShapeID(datapath, pdStopSeq["trip_id"][0])
+  try:
+    lTripID = getTripID(datapath, RouteID, lServiceID)  ### PROBLEM HERE WITH SASKATOON RT 13
+    jsondata["trip_id"] = lTripID # Audit Trail
+    success = True
+  except:
+    jsondata["trip_id"] = [] # Audit Trail
+    success = False
 
 
-  print ShpID
-  ####### START HERE
 
-  jsondata["testout"] = []
+  try:
+
+    # Find Trip ID Sequence Based on Arrival Time of First Stop, Return Sequence
+    pdStopSeq = getStopSeq(datapath, lTripID, trTime)
+
+    # Check if a stop sequence is present
+    if len(pdStopSeq) > 0:
+      # Get Shape ID from Trip ID
+      ShpID = getShapeID(datapath, pdStopSeq["trip_id"][0])
+      # Get Route Polyline Sequence
+      pdShpSeq = getRtPolySeq(datapath, ShpID)
+
+      print pdShpSeq
+
+
+
+
+      jsondata["testout"] = "yes sequence"
+
+
+
+
+      # Indicate JSON Data Success
+      jsondata["success"] = "true" 
+
+    else:
+      # Indicate JSON Data Failure, due to no available sequence
+      jsondata["success"] = "false" 
+      
+
+
+      jsondata["testout"] = "no sequence"
+
+      ####### START HERE
+
+  except:
+    pass
 
 
   ## CREATE TRIP MAP STUFF HERE WITH PANDAS
@@ -134,8 +177,13 @@ def createTripMap(uuid, AgencyID, RouteID, datetime):
   #### NEED VALIDATION FOR EMPTY LISTS
 
 
-  # Indicate JSON Data Success
-  jsondata["success"] = "true"
+
+
+  # Confirm whether calculations succeeded
+  if success:
+    jsondata["success"] = "true"
+  else:
+    jsondata["success"] = "false"
 
   return json.dumps(jsondata)
 
@@ -224,6 +272,14 @@ def convTimeSecs(hhmmss):
 
   return timesecs
 
+# Function to Get Route Polyline Sequence
+def getRtPolySeq(filepath, shpid):
+  pdShapes = pd.read_csv(filepath + "shapes.txt", encoding="utf-8-sig")
+  pdShpSeq = pdShapes[(pdShapes["shape_id"] == shpid)].reset_index(drop=True)
+  pdShpSeq = pdShpSeq.sort_index(by=["shape_pt_sequence"])
+
+  return pdShpSeq
+
 # Function to Get Shape ID
 def getShapeID(filepath, tripid):
   pdTrips = pd.read_csv(filepath + "trips.txt", encoding="utf-8-sig")
@@ -274,10 +330,13 @@ def getStopSeq(filepath, trid, trtime):
   #### CAVEAT - POTENTIAL ISSUE, USE .loc, next line
   selstseq["arrival_time"] = (dfTimeCol.str[0].astype("int") * 3600) + (dfTimeCol.str[1].astype("int") * 60) +  dfTimeCol.str[2].astype("int") # Convert to Seconds
   selstseq = selstseq[(selstseq["arrival_time"] >= convTimeSecs(trtime))]
-  selstseq = selstseq.loc[selstseq["arrival_time"].idxmin(),:]
-  pdStopSeq = pdStopTimes[(pdStopTimes["trip_id"] == selstseq["trip_id"])]
+  try: # Attempt to find stop times for route at requested interval
+    selstseq = selstseq.loc[selstseq["arrival_time"].idxmin(),:]
+    pdStopSeq = pdStopTimes[(pdStopTimes["trip_id"] == selstseq["trip_id"])]
+    return pdStopSeq.reset_index(drop=True)
 
-  return pdStopSeq.reset_index(drop=True)
+  except: # Return empty data frame
+    return pd.DataFrame() 
 
 # Function to Get Trip IDs
 def getTripID(filepath, rtid, srvid):
