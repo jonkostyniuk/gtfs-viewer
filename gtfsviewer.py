@@ -117,69 +117,61 @@ def createTripMap(uuid, AgencyID, RouteID, datetime):
   try:
     lServiceID = getServiceID(datapath, trDate)
     jsondata["service_id"] = lServiceID # Audit Trail
+    print lServiceID
     success = True
   except:
     jsondata["service_id"] = [] # Audit Trail
+    print "ERROR: Service ID failed to resolve!!"
     success = False
 
   # Get Valid Trip ID List from Route and Service IDs
   try:
-    lTripID = getTripID(datapath, RouteID, lServiceID)  ### PROBLEM HERE WITH SASKATOON RT 13
+    lTripID = getTripID(datapath, RouteID, lServiceID)
     jsondata["trip_id"] = lTripID # Audit Trail
+    print lTripID
     success = True
   except:
     jsondata["trip_id"] = [] # Audit Trail
+    print "ERROR: Initial Trip ID failed to resolve!!"
     success = False
 
-
-
+  # Get Trip ID Sequence Based on Arrival Time of First Stop, Return Sequence
   try:
-
-    # Find Trip ID Sequence Based on Arrival Time of First Stop, Return Sequence
     pdStopSeq = getStopSeq(datapath, lTripID, trTime)
-
-    # Check if a stop sequence is present
-    if len(pdStopSeq) > 0:
-      # Get Shape ID from Trip ID
-      ShpID = getShapeID(datapath, pdStopSeq["trip_id"][0])
-      # Get Route Polyline Sequence
-      pdShpSeq = getRtPolySeq(datapath, ShpID)
-
-      print pdShpSeq
-
-
-
-
-      jsondata["testout"] = "yes sequence"
-
-
-
-
-      # Indicate JSON Data Success
-      jsondata["success"] = "true" 
-
-    else:
-      # Indicate JSON Data Failure, due to no available sequence
-      jsondata["success"] = "false" 
-      
-
-
-      jsondata["testout"] = "no sequence"
-
-      ####### START HERE
-
+    jsondata["trip_id"] = pdStopSeq["trip_id"][0] # Audit Trail
+    print pdStopSeq["trip_id"][0]
+    success = True
   except:
-    pass
+    jsondata["trip_id"] = -1 # Audit Trail
+    print "ERROR: Final Trip ID failed to resolve!!"
+    success = False
 
+  # Get Shape ID from Trip ID
+  try:
+    ShpID = getShapeID(datapath, pdStopSeq["trip_id"][0])
+    jsondata["shape_id"] = ShpID # Audit Trail
+    print ShpID
+    success = True
+  except:
+    jsondata["shape_id"] = -1 # Audit Trail
+    print "ERROR: Polyline Shape ID failed to resolve!!"
+    success = False
 
-  ## CREATE TRIP MAP STUFF HERE WITH PANDAS
-  jsondata["datetime"] = trDate ##TEMP
-  #### NEED VALIDATION FOR EMPTY LISTS
+  # Get Route Polyline Sequence
+  try:
+    lShpSeq = getRtPolySeq(datapath, ShpID)
+    jsondata["shape_sequence"] = lShpSeq
+    print lShpSeq
+    success = True
+  except:
+    jsondata["shape_sequence"] = [] # Audit Trail
+    print "ERROR: Shape Sequence failed to resolve!!"
+    success = False
 
+  # Output Final Parsed Date and Time
+  jsondata["datetime"] = trDate + ", " + trTime
 
-
-
-  # Confirm whether calculations succeeded
+  # Confirm whether calculations succeeded, as tried above
   if success:
     jsondata["success"] = "true"
   else:
@@ -277,8 +269,14 @@ def getRtPolySeq(filepath, shpid):
   pdShapes = pd.read_csv(filepath + "shapes.txt", encoding="utf-8-sig")
   pdShpSeq = pdShapes[(pdShapes["shape_id"] == shpid)].reset_index(drop=True)
   pdShpSeq = pdShpSeq.sort_index(by=["shape_pt_sequence"])
+  pdShpSeq = pdShpSeq[["shape_pt_lat", "shape_pt_lon", "shape_pt_sequence"]]
+  dShpSeq = pdShpSeq.transpose().to_dict() # Transform to transposed dictionary object
+  # Transfrom from dictionary to list object
+  lShpSeq = []
+  for seqk, seqv in dShpSeq.iteritems():
+    lShpSeq.append(seqv) # Save sequence value, not key
 
-  return pdShpSeq
+  return lShpSeq
 
 # Function to Get Shape ID
 def getShapeID(filepath, tripid):
@@ -342,6 +340,7 @@ def getStopSeq(filepath, trid, trtime):
 def getTripID(filepath, rtid, srvid):
   # Lookup Calendar Day of Week and Get Service ID 
   pdTrips = pd.read_csv(filepath + "trips.txt", encoding="utf-8-sig")
+  pdTrips["route_id"] = pdTrips["route_id"].astype(str) # Ensure Route ID Always String Type
   # Lookup Valid Trip IDs
   tripsel = pdTrips[(pdTrips["service_id"].isin(srvid)) & (pdTrips["route_id"] == rtid)]
   lTripID = tripsel["trip_id"].tolist()
@@ -404,17 +403,8 @@ def unzipGTFS(fileloc):
 
 
 # ##########################################################################################################
-# MAIN PROGRAM
+# END OF SCRIPT
 # ##########################################################################################################
-
-# Function to handle Main Program (Not Used)
-#def main():
-#  return
-
-# Call Main Program (Not Used)
-#if __name__ == "__main__":
-#  main()
-
 
 
 
@@ -496,11 +486,3 @@ JSON--
   ]
 }
 """
-
-
-
-
-
-# ##########################################################################################################
-# END OF SCRIPT
-# ##########################################################################################################
