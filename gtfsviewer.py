@@ -107,6 +107,7 @@ def createTripMap(uuid, AgencyID, RouteID, datetime):
   jsondata = {}
   jsondata["uuid"] = str(uuid)
   jsondata["agency_id"] = int(AgencyID)
+  jsondata["agency_name"] = readAgencyName(datapath)
   jsondata["route_id"] = RouteID
 
   # Split Date and Time Data
@@ -117,7 +118,7 @@ def createTripMap(uuid, AgencyID, RouteID, datetime):
   try:
     lServiceID = getServiceID(datapath, trDate)
     jsondata["service_id"] = lServiceID # Audit Trail
-    print lServiceID
+    #print lServiceID
     success = True
   except:
     jsondata["service_id"] = [] # Audit Trail
@@ -128,7 +129,7 @@ def createTripMap(uuid, AgencyID, RouteID, datetime):
   try:
     lTripID = getTripID(datapath, RouteID, lServiceID)
     jsondata["trip_id"] = lTripID # Audit Trail
-    print lTripID
+    #print lTripID
     success = True
   except:
     jsondata["trip_id"] = [] # Audit Trail
@@ -137,9 +138,10 @@ def createTripMap(uuid, AgencyID, RouteID, datetime):
 
   # Get Trip ID Sequence Based on Arrival Time of First Stop, Return Sequence
   try:
-    pdStopSeq = getStopSeq(datapath, lTripID, trTime)
-    jsondata["trip_id"] = pdStopSeq["trip_id"][0] # Audit Trail
-    print pdStopSeq["trip_id"][0]
+    lStopSeq = getStopSeq(datapath, lTripID, trTime)
+    jsondata["trip_id"] = lStopSeq[0]["trip_id"] # Audit Trail
+    jsondata["stop_sequence"] = lStopSeq
+    #print lStopSeq[0]["trip_id"]
     success = True
   except:
     jsondata["trip_id"] = -1 # Audit Trail
@@ -148,9 +150,11 @@ def createTripMap(uuid, AgencyID, RouteID, datetime):
 
   # Get Shape ID from Trip ID
   try:
-    ShpID = getShapeID(datapath, pdStopSeq["trip_id"][0])
+    [ShpID, ServID] = getShapeID(datapath, lStopSeq[0]["trip_id"])
     jsondata["shape_id"] = ShpID # Audit Trail
-    print ShpID
+    jsondata["service_id"] = ServID # Get Final Service ID
+    #print ShpID
+    #print ServID
     success = True
   except:
     jsondata["shape_id"] = -1 # Audit Trail
@@ -161,7 +165,7 @@ def createTripMap(uuid, AgencyID, RouteID, datetime):
   try:
     lShpSeq = getRtPolySeq(datapath, ShpID)
     jsondata["shape_sequence"] = lShpSeq
-    print lShpSeq
+    #print lShpSeq
     success = True
   except:
     jsondata["shape_sequence"] = [] # Audit Trail
@@ -284,9 +288,10 @@ def getShapeID(filepath, tripid):
   tripsel = pdTrips[(pdTrips["trip_id"] == tripid)].reset_index(drop=True)
   if len(tripsel) == 1:
     shpid = tripsel["shape_id"][0]
-    return shpid
+    servid = tripsel["service_id"][0]
+    return [shpid, servid]
   else:
-    return -1
+    return [-1, -1]
 
 # Function to Get Service IDs
 def getServiceID(filepath, trdate):
@@ -331,10 +336,18 @@ def getStopSeq(filepath, trid, trtime):
   try: # Attempt to find stop times for route at requested interval
     selstseq = selstseq.loc[selstseq["arrival_time"].idxmin(),:]
     pdStopSeq = pdStopTimes[(pdStopTimes["trip_id"] == selstseq["trip_id"])]
-    return pdStopSeq.reset_index(drop=True)
+    #pdStopSeq = pdStopSeq[["arrival_time", "departure_time", "stop_id", "stop_sequence"]]
+    pdStopSeq = pdStopSeq.reset_index(drop=True)
+    # Transform Data Object into List
+    dStopSeq = pdStopSeq.transpose().to_dict() # Transform to transposed dictionary object
+    # Transfrom from dictionary to list object
+    lStopSeq = []
+    for seqk, seqv in dStopSeq.iteritems():
+      lStopSeq.append(seqv) # Save sequence value, not key
+    return lStopSeq
 
-  except: # Return empty data frame
-    return pd.DataFrame() 
+  except: # Return empty data
+    return []
 
 # Function to Get Trip IDs
 def getTripID(filepath, rtid, srvid):

@@ -111,6 +111,9 @@ function createTripMap() {
 			dataType: "json",
 			success: function($data) {
 				$TripData = $data;
+
+
+				// START HERE
 			},
 		    error: function ($jqXHR, $textStatus, $errorThrown) {
 	            if ($jqXHR.status == 500) {
