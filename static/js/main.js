@@ -44,8 +44,19 @@ var $diaName = null;												// Name of Dialogue Window Open
 var $UUID = null;													// Client Side Unique User ID
 var $TimeOffset = new Date().getTimezoneOffset();					// Timezone Offset in Minutes
 
+// Google Maps Polyline Options
+var $busPath;
+var $gmPolyOpts = {
+	path: [],
+	geodesic: true,
+	strokeColor: "#ff0000",
+	strokeOpacity: 1.0,
+	strokeWeight: 2
+};
+var $busPath = new google.maps.Polyline($gmPolyOpts);
+
 // AJAX Loading 'spin.js' Variables
-var opts = { 														// Set Spin Options
+var $SpinOpts = { 														// Set Spin Options
    lines: 13, // The number of lines to draw
    length: 7, // The length of each line
    width: 4, // The line thickness
@@ -61,7 +72,7 @@ var opts = { 														// Set Spin Options
    top: 'auto', // Top position relative to parent in px
    left: 'auto' // Left position relative to parent in px
 };
-var spinner = new Spinner(opts);									// Spinner Object Initialize
+var spinner = new Spinner($SpinOpts);									// Spinner Object Initialize
 var ajax_cnt = 0;													// Support for parallel AJAX requests
  
 
@@ -110,10 +121,35 @@ function createTripMap() {
 			data: JSON.stringify($reqData),
 			dataType: "json",
 			success: function($data) {
+				// Save Global JSON Data
 				$TripData = $data;
 
+				// Clear any old data
+				$gmPolyOpts["path"] = [];
+				$busPath = new google.maps.Polyline($gmPolyOpts);
+				$busPath.setMap(null);
 
-				// START HERE
+				// Set Bounds Object
+				var $bounds = new google.maps.LatLngBounds();
+				// Define Polyline Shape Sequence
+				var $ShpSeq = [];
+				for(var $i =0; $i < $TripData["shape_sequence"].length; $i++) {
+					var $polypt = new google.maps.LatLng(
+						$TripData["shape_sequence"][$i]["shape_pt_lat"],
+						$TripData["shape_sequence"][$i]["shape_pt_lon"]
+						);
+					$ShpSeq.push($polypt); // Add new point to polyline
+					$bounds.extend($polypt); // Extend polyline boundary fit
+				}
+
+				// Define Polyline Options and Update Map Visually
+				$gmPolyOpts["path"] = $ShpSeq;
+				$busPath = new google.maps.Polyline($gmPolyOpts);
+				$busPath.setMap($map);
+    			$map.fitBounds($bounds);
+
+
+    			alert($gmPolyOpts["path"].length);
 			},
 		    error: function ($jqXHR, $textStatus, $errorThrown) {
 	            if ($jqXHR.status == 500) {
