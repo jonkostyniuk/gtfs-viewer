@@ -45,6 +45,9 @@ var $UUID = null;													// Client Side Unique User ID
 var $TimeOffset = new Date().getTimezoneOffset();					// Timezone Offset in Minutes
 
 // Google Maps Polyline Options
+var $polyline = null;
+var $polypts = [];
+
 var $busPath;
 var $gmPolyOpts = {
 	path: [],
@@ -124,32 +127,34 @@ function createTripMap() {
 				// Save Global JSON Data
 				$TripData = $data;
 
-				// Clear any old data
-				$gmPolyOpts["path"] = [];
-				$busPath = new google.maps.Polyline($gmPolyOpts);
-				$busPath.setMap(null);
+				//// ADD DATA VALIDATION HERE
+
+				// Clear existing polyline
+				if($polyline) {
+					$polyline.setMap(null);
+				}
+				$polypts = [];
 
 				// Set Bounds Object
 				var $bounds = new google.maps.LatLngBounds();
 				// Define Polyline Shape Sequence
-				var $ShpSeq = [];
 				for(var $i =0; $i < $TripData["shape_sequence"].length; $i++) {
 					var $polypt = new google.maps.LatLng(
 						$TripData["shape_sequence"][$i]["shape_pt_lat"],
 						$TripData["shape_sequence"][$i]["shape_pt_lon"]
 						);
-					$ShpSeq.push($polypt); // Add new point to polyline
+					$polypts.push($polypt); // Add new point to polyline
 					$bounds.extend($polypt); // Extend polyline boundary fit
 				}
 
-				// Define Polyline Options and Update Map Visually
-				$gmPolyOpts["path"] = $ShpSeq;
-				$busPath = new google.maps.Polyline($gmPolyOpts);
-				$busPath.setMap($map);
-    			$map.fitBounds($bounds);
-
-
-    			alert($gmPolyOpts["path"].length);
+				// Set new polyline on map
+				$polyline = new google.maps.Polyline({
+					path: $polypts,
+					strokeColor: "#ff0000",
+					map: $map
+				});
+				$polyline.setMap($map);
+				$map.fitBounds($bounds);
 			},
 		    error: function ($jqXHR, $textStatus, $errorThrown) {
 	            if ($jqXHR.status == 500) {

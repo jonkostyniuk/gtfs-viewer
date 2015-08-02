@@ -142,6 +142,7 @@ def createTripMap(uuid, AgencyID, RouteID, datetime):
     jsondata["trip_id"] = lStopSeq[0]["trip_id"] # Audit Trail
     jsondata["stop_sequence"] = lStopSeq
     #print lStopSeq[0]["trip_id"]
+    #print lStopSeq
     success = True
   except:
     jsondata["trip_id"] = -1 # Audit Trail
@@ -330,13 +331,12 @@ def getStopSeq(filepath, trid, trtime):
   dfTimeCol = selstseq["arrival_time"] # Temp Variable to Hold Time Data
   dfTimeCol = dfTimeCol.str.strip() # Strip Whitespace
   dfTimeCol = dfTimeCol.str.split(":") # Split Time Values between ':'  
-  #### CAVEAT - POTENTIAL ISSUE, USE .loc, next line
-  selstseq["arrival_time"] = (dfTimeCol.str[0].astype("int") * 3600) + (dfTimeCol.str[1].astype("int") * 60) +  dfTimeCol.str[2].astype("int") # Convert to Seconds
+  selstseq.loc[:, "arrival_time"] = (dfTimeCol.str[0].astype("int") * 3600) + (dfTimeCol.str[1].astype("int") * 60) +  dfTimeCol.str[2].astype("int") # Convert to Seconds
   selstseq = selstseq[(selstseq["arrival_time"] >= convTimeSecs(trtime))]
   try: # Attempt to find stop times for route at requested interval
     selstseq = selstseq.loc[selstseq["arrival_time"].idxmin(),:]
     pdStopSeq = pdStopTimes[(pdStopTimes["trip_id"] == selstseq["trip_id"])]
-    #pdStopSeq = pdStopSeq[["arrival_time", "departure_time", "stop_id", "stop_sequence"]]
+    pdStopSeq = pdStopSeq[["trip_id", "arrival_time", "departure_time", "stop_id", "stop_sequence"]]
     pdStopSeq = pdStopSeq.reset_index(drop=True)
     # Transform Data Object into List
     dStopSeq = pdStopSeq.transpose().to_dict() # Transform to transposed dictionary object
