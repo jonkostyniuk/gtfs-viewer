@@ -146,12 +146,13 @@ def createTripMap(uuid, AgencyID, RouteID, datetime):
     success = True
   except:
     jsondata["trip_id"] = -1 # Audit Trail
-    print "ERROR: Final Trip ID failed to resolve!!"
+    jsondata["stop_sequence"] = []
+    print "ERROR: Final Trip ID and Stop Sequence failed to resolve!!"
     success = False
 
   # Get Shape ID from Trip ID
   try:
-    [ShpID, ServID] = getShapeID(datapath, lStopSeq[0]["trip_id"])
+    [ShpID, ServID] = getShapeID(datapath, jsondata["trip_id"])
     jsondata["shape_id"] = ShpID # Audit Trail
     jsondata["service_id"] = ServID # Get Final Service ID
     #print ShpID
@@ -159,12 +160,13 @@ def createTripMap(uuid, AgencyID, RouteID, datetime):
     success = True
   except:
     jsondata["shape_id"] = -1 # Audit Trail
-    print "ERROR: Polyline Shape ID failed to resolve!!"
+    jsondata["service_id"] = -1
+    print "ERROR: Polyline Shape ID and Service ID failed to resolve!!"
     success = False
 
   # Get Route Polyline Sequence
   try:
-    lShpSeq = getRtPolySeq(datapath, ShpID)
+    lShpSeq = getRtPolySeq(datapath, jsondata["shape_id"])
     jsondata["shape_sequence"] = lShpSeq
     #print lShpSeq
     success = True
@@ -272,9 +274,10 @@ def convTimeSecs(hhmmss):
 # Function to Get Route Polyline Sequence
 def getRtPolySeq(filepath, shpid):
   pdShapes = pd.read_csv(filepath + "shapes.txt", encoding="utf-8-sig")
-  pdShpSeq = pdShapes[(pdShapes["shape_id"] == shpid)].reset_index(drop=True)
+  pdShpSeq = pdShapes[(pdShapes["shape_id"].astype(str) == str(shpid))].reset_index(drop=True)
   pdShpSeq = pdShpSeq.sort_index(by=["shape_pt_sequence"])
   pdShpSeq = pdShpSeq[["shape_pt_lat", "shape_pt_lon", "shape_pt_sequence"]]
+  #print pdShpSeq.info()
   dShpSeq = pdShpSeq.transpose().to_dict() # Transform to transposed dictionary object
   # Transfrom from dictionary to list object
   lShpSeq = []
@@ -338,6 +341,7 @@ def getStopSeq(filepath, trid, trtime):
     pdStopSeq = pdStopTimes[(pdStopTimes["trip_id"] == selstseq["trip_id"])]
     pdStopSeq = pdStopSeq[["trip_id", "arrival_time", "departure_time", "stop_id", "stop_sequence"]]
     pdStopSeq = pdStopSeq.reset_index(drop=True)
+    #print pdStopSeq.info()
     # Transform Data Object into List
     dStopSeq = pdStopSeq.transpose().to_dict() # Transform to transposed dictionary object
     # Transfrom from dictionary to list object

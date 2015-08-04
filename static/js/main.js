@@ -128,6 +128,19 @@ function createTripMap() {
 				$TripData = $data;
 
 				//// ADD DATA VALIDATION HERE
+				/*
+				jsondata["service_id"] = []
+
+				jsondata["trip_id"] = []
+
+				jsondata["trip_id"] = -1
+   				jsondata["stop_sequence"] = []
+
+   				jsondata["shape_id"] = -1
+    			jsondata["service_id"] = -1
+
+				jsondata["shape_sequence"] = []
+				*/
 
 				// Clear existing polyline
 				if($polyline) {
