@@ -47,16 +47,20 @@ var $TimeOffset = new Date().getTimezoneOffset();					// Timezone Offset in Minu
 // Google Maps Polyline Options
 var $polyline = null;
 var $polypts = [];
-
-var $busPath;
-var $gmPolyOpts = {
-	path: [],
+var $polyopts = {
 	geodesic: true,
-	strokeColor: "#ff0000",
+	strokeColor: "#0000ff",
 	strokeOpacity: 1.0,
-	strokeWeight: 2
+	strokeWeight: 3
 };
-var $busPath = new google.maps.Polyline($gmPolyOpts);
+
+// Google Maps Marker References
+var $gmMarkers = {
+	green: "http://maps.google.com/mapfiles/ms/icons/green-dot.png",
+	red: "http://maps.google.com/mapfiles/ms/icons/red-dot.png",
+	blue: "http://maps.google.com/mapfiles/ms/icons/blue-dot.png",
+	yellow: "http://maps.google.com/mapfiles/ms/icons/yellow-dot.png"
+};
 
 // AJAX Loading 'spin.js' Variables
 var $SpinOpts = { 														// Set Spin Options
@@ -127,47 +131,52 @@ function createTripMap() {
 				// Save Global JSON Data
 				$TripData = $data;
 
-				//// ADD DATA VALIDATION HERE
-				/*
-				jsondata["service_id"] = []
+				// Validate Returned JSON Data
+				var $tdMsg = valTripData($TripData);
+				if($tdMsg == "success") {
+					// Clear existing polyline
+					if($polyline) {
+						$polyline.setMap(null);
+					}
+					$polypts = [];
+					// Set Bounds Object
+					var $bounds = new google.maps.LatLngBounds();
+					// Define Polyline Shape Sequence
+					for(var $i =0; $i < $TripData["shape_sequence"].length; $i++) {
+						var $polypt = new google.maps.LatLng(
+							$TripData["shape_sequence"][$i]["shape_pt_lat"],
+							$TripData["shape_sequence"][$i]["shape_pt_lon"]
+							);
+						$polypts.push($polypt); // Add new point to polyline
+						$bounds.extend($polypt); // Extend polyline boundary fit
+					}
+					// Set new polyline on map
+					$polyline = new google.maps.Polyline({
+						path: $polypts,
+						map: $map,
+						strokeColor: $polyopts["strokeColor"],
+						geodesic: $polyopts["geodesic"],
+						strokeOpacity: $polyopts["strokeOpacity"],
+						strokeWeight: $polyopts["strokeWeight"]
+					});
+					$polyline.setMap($map);
+					$map.fitBounds($bounds);
 
-				jsondata["trip_id"] = []
-
-				jsondata["trip_id"] = -1
-   				jsondata["stop_sequence"] = []
-
-   				jsondata["shape_id"] = -1
-    			jsondata["service_id"] = -1
-
-				jsondata["shape_sequence"] = []
-				*/
-
-				// Clear existing polyline
-				if($polyline) {
-					$polyline.setMap(null);
+					// Set Route Information for Trip
+					$rtOutput = "";
+					$rtOutput += "Route ID: <i>" + $TripData["route_id"] + "</i><br />";
+					$rtOutput += "Service ID: <i>" + $TripData["service_id"] + "</i><br />";
+					$rtOutput += "Trip ID: <i>" + $TripData["trip_id"] + "</i><br />";
+					$rtOutput += "Shape ID: <i>" + $TripData["shape_id"] + "</i><br />";
+					$rtOutput += "Start Time: <i>" + $TripData["stop_sequence"][0]["departure_time"] + "</i><br />";
+					$rtOutput += "End Time: <i>" + $TripData["stop_sequence"][$TripData["stop_sequence"].length - 1]["arrival_time"] + "</i><br />";
+					$("#route-out").html($rtOutput);
 				}
-				$polypts = [];
-
-				// Set Bounds Object
-				var $bounds = new google.maps.LatLngBounds();
-				// Define Polyline Shape Sequence
-				for(var $i =0; $i < $TripData["shape_sequence"].length; $i++) {
-					var $polypt = new google.maps.LatLng(
-						$TripData["shape_sequence"][$i]["shape_pt_lat"],
-						$TripData["shape_sequence"][$i]["shape_pt_lon"]
-						);
-					$polypts.push($polypt); // Add new point to polyline
-					$bounds.extend($polypt); // Extend polyline boundary fit
+				else {
+					alert($tdMsg); // Development - Handle through Bootstrap in production
 				}
 
-				// Set new polyline on map
-				$polyline = new google.maps.Polyline({
-					path: $polypts,
-					strokeColor: "#ff0000",
-					map: $map
-				});
-				$polyline.setMap($map);
-				$map.fitBounds($bounds);
+
 			},
 		    error: function ($jqXHR, $textStatus, $errorThrown) {
 	            if ($jqXHR.status == 500) {
@@ -516,7 +525,28 @@ function parseGTFS($gtfsjson) {
 	// Output Results
 	$("#agency-data").html($gtfsline);
 	$("#aTotal").html("Total Agencies: " + $aCount);
-	return ;
+	return;
+}
+
+// Functions to Validate Trip Data
+function valTripData($tdata) {
+	if($tdata["service_id"] == []) {
+		return "ERROR: Service ID failed to resolve for selected date and time!!";
+	}
+	if($tdata["trip_id"] == []) {
+		return "ERROR: Initial Trip ID failed to resolve for selected date and time!!";
+	}
+	if($tdata["trip_id"] == -1 || $tdata["stop_sequence"] == []) {
+		return "ERROR: Final Trip ID and/or Stop Sequence failed to resolve for selected date and time!!";
+	}
+	if($tdata["shape_id"] == -1 || $tdata["service_id"] == -1) {
+		return "ERROR: Shape ID and/or Service ID failed to resolve for selected date and time!!";
+	}
+	if($tdata["shape_sequence"] == []) {
+		return "ERROR: Shape Sequence failed to resolve for selected date and time!!";
+	}
+
+	return "success";
 }
 
 // TEMP FOR TESTING
