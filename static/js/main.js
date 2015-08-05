@@ -55,6 +55,8 @@ var $polyopts = {
 };
 
 // Google Maps Marker References
+var $sMarker = null;
+var $eMarker = null;
 var $gmMarkers = {
 	green: "http://maps.google.com/mapfiles/ms/icons/green-dot.png",
 	red: "http://maps.google.com/mapfiles/ms/icons/red-dot.png",
@@ -136,19 +138,22 @@ function createTripMap() {
 				if($tdMsg == "success") {
 					// Clear existing polyline
 					if($polyline) {
-						$polyline.setMap(null);
+						$polyline.setMap(null); // Remove polyline
+						$sMarker.setMap(null); // Remove start marker
+						$eMarker.setMap(null); // Remove end marker
 					}
 					$polypts = [];
 					// Set Bounds Object
 					var $bounds = new google.maps.LatLngBounds();
 					// Define Polyline Shape Sequence
 					for(var $i =0; $i < $TripData["shape_sequence"].length; $i++) {
+						// Create Lat/Lon Point Object
 						var $polypt = new google.maps.LatLng(
 							$TripData["shape_sequence"][$i]["shape_pt_lat"],
 							$TripData["shape_sequence"][$i]["shape_pt_lon"]
 							);
 						$polypts.push($polypt); // Add new point to polyline
-						$bounds.extend($polypt); // Extend polyline boundary fit
+						$bounds.extend($polypt); // Extend polyline boundary fit		
 					}
 					// Set new polyline on map
 					$polyline = new google.maps.Polyline({
@@ -161,6 +166,20 @@ function createTripMap() {
 					});
 					$polyline.setMap($map);
 					$map.fitBounds($bounds);
+
+					// Set new start and end markers
+					$sPoint = $polypts[0]; // Set Start Point of Polyline
+					$sMarker = new google.maps.Marker({
+						position: $sPoint,
+						map: $map,
+						icon: $gmMarkers["green"]
+					});
+					$ePoint = $polypts[$polypts.length - 1]; // Set End Point of Polyline
+					$eMarker = new google.maps.Marker({
+						position: $ePoint,
+						map: $map,
+						icon: $gmMarkers["red"]
+					});
 
 					// Set Route Information for Trip
 					$rtOutput = "";
