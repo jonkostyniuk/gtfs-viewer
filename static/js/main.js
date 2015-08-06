@@ -24,40 +24,46 @@
 // DEFINITIONS
 // ##########################################################################################################
 
-// Map Variables
-var $map = null;													// Google Map Variable
+// Map Object Variables
+var $map = null; // Google Map Variable
+var $mapOptions = { // Map Options Variables
+	zoom: 5,
+	center: new google.maps.LatLng(49.895529, -97.138449)
+};
+var $ehMapIdle = null; // Google Map Idle Event Handler Object
 
 // GTFS Data Variables
-var $AgencyData = null; 											// JSON Object for Agency Feed Data
-var $SelAgency = null;												// Selected Transit Agency ID
-var $GTFS_API = "http://www.gtfs-data-exchange.com/api/agencies"	// GTFS Exchange API Data
-var $GTFS_ZIP = new RegExp(/\.(zip$)/);								// GTFS ZIP File Regular Expression
-var $ZipType = null;												// ZIP Radio - URL or File
+var $AgencyData = null; // JSON Object for Agency Feed Data
+var $SelAgency = null; // Selected Transit Agency ID
+var $GTFS_API = "http://www.gtfs-data-exchange.com/api/agencies"; // GTFS Exchange API Data
+var $GTFS_ZIP = new RegExp(/\.(zip$)/); // GTFS ZIP File Regular Expression
+var $ZipType = null; // ZIP Radio - URL or File
 
 // Loaded Agency Variables
-var $AgencyPreset = null;											// JSON Object for User Agency Preset Data
-var $RoutesData = null;												// JSON Object for Agency Route Data
-var $TripData = null;												// JSON Object for Route Trip Data
+var $AgencyPreset = null; // JSON Object for User Agency Preset Data
+var $RoutesData = null;	// JSON Object for Agency Route Data
+var $TripData = null; // JSON Object for Route Trip Data
 
 // GUI Variables
-var $diaName = null;												// Name of Dialogue Window Open
-var $UUID = null;													// Client Side Unique User ID
-var $TimeOffset = new Date().getTimezoneOffset();					// Timezone Offset in Minutes
+var $diaName = null; // Name of Dialogue Window Open
+var $UUID = null; // Client Side Unique User ID
+var $TimeOffset = new Date().getTimezoneOffset(); // Timezone Offset in Minutes
 
 // Google Maps Polyline Options
-var $polyline = null;
-var $polypts = [];
-var $polyopts = {
+var $polyline = null; // Polyline Object Initialization
+var $polypts = []; // Array to hold polyline points
+var $polyopts = { // Options for polyline styling
 	geodesic: true,
 	strokeColor: "#0000ff",
 	strokeOpacity: 1.0,
 	strokeWeight: 3
 };
+var $bounds = null; // Map Bounds Object Initialization
 
 // Google Maps Marker References
-var $sMarker = null;
-var $eMarker = null;
-var $gmMarkers = {
+var $sMarker = null; // Start Marker Object Initialization
+var $eMarker = null; // End Marker Object Initialization
+var $gmMarkers = { // Google Map Marker References
 	green: "http://maps.google.com/mapfiles/ms/icons/green-dot.png",
 	red: "http://maps.google.com/mapfiles/ms/icons/red-dot.png",
 	blue: "http://maps.google.com/mapfiles/ms/icons/blue-dot.png",
@@ -65,7 +71,7 @@ var $gmMarkers = {
 };
 
 // AJAX Loading 'spin.js' Variables
-var $SpinOpts = { 														// Set Spin Options
+var $SpinOpts = { // Set Spin Options
    lines: 13, // The number of lines to draw
    length: 7, // The length of each line
    width: 4, // The line thickness
@@ -81,8 +87,8 @@ var $SpinOpts = { 														// Set Spin Options
    top: 'auto', // Top position relative to parent in px
    left: 'auto' // Left position relative to parent in px
 };
-var spinner = new Spinner($SpinOpts);									// Spinner Object Initialize
-var ajax_cnt = 0;													// Support for parallel AJAX requests
+var spinner = new Spinner($SpinOpts); // Spinner Object Initialize
+var ajax_cnt = 0; // Support for parallel AJAX requests
  
 
 // ##########################################################################################################
@@ -144,7 +150,7 @@ function createTripMap() {
 					}
 					$polypts = [];
 					// Set Bounds Object
-					var $bounds = new google.maps.LatLngBounds();
+					$bounds = new google.maps.LatLngBounds();
 					// Define Polyline Shape Sequence
 					for(var $i =0; $i < $TripData["shape_sequence"].length; $i++) {
 						// Create Lat/Lon Point Object
@@ -190,6 +196,9 @@ function createTripMap() {
 					$rtOutput += "Start Time: <i>" + $TripData["stop_sequence"][0]["departure_time"] + "</i><br />";
 					$rtOutput += "End Time: <i>" + $TripData["stop_sequence"][$TripData["stop_sequence"].length - 1]["arrival_time"] + "</i><br />";
 					$("#route-out").html($rtOutput);
+
+					// Add Google Maps Event Handler for Idle Condition
+					google.maps.event.addListener($map, "idle", ehMapIdle()); // Map Idle After Change Event Handler
 				}
 				else {
 					alert($tdMsg); // Development - Handle through Bootstrap in production
@@ -240,15 +249,18 @@ function createUUID() {
 	return;
 }
 
+// Function to Control Map Zoom Event Handler
+function ehMapIdle() {
+	alert('good');
+	console.log($map);
+	return;
+}
+
 // Function to Initialize Google Map
 function initMap() {
 	// Create New Google Maps Object
-	var $mapOptions = {
-	    zoom: 5,
-	    center: new google.maps.LatLng(49.895529, -97.138449)
-		};
 	$map = new google.maps.Map($('#gmap')[0], $mapOptions);
-
+	
 	return;
 }
 
@@ -698,8 +710,8 @@ $("#datetime").datetimepicker({
 });
 $("#datetime").children().prop("disabled", true);
 
-// Initialize Google Maps DOM on Page Load
-google.maps.event.addDomListener(window, 'load', initMap());
+// Initialize Google Maps DOM and Event Handlers on Page Load
+google.maps.event.addDomListener(window, 'load', initMap()); // Initialize Map Object
 
 // Create and/or Verify Unique User ID on Client Side
 createUUID();
