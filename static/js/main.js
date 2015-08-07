@@ -31,6 +31,7 @@ var $mapOptions = { // Map Options Variables
 	center: new google.maps.LatLng(49.895529, -97.138449)
 };
 var $ehMapIdle = null; // Google Map Idle Event Handler Object
+google.setOnLoadCallback(initMap); // Asynchronous Call Back to Initialize Map
 
 // GTFS Data Variables
 var $AgencyData = null; // JSON Object for Agency Feed Data
@@ -87,8 +88,8 @@ var $SpinOpts = { // Set Spin Options
    top: 'auto', // Top position relative to parent in px
    left: 'auto' // Left position relative to parent in px
 };
-var spinner = new Spinner($SpinOpts); // Spinner Object Initialize
-var ajax_cnt = 0; // Support for parallel AJAX requests
+var $spinner = new Spinner($SpinOpts); // Spinner Object Initialize
+var $ajax_cnt = 0; // Support for parallel AJAX requests
  
 
 // ##########################################################################################################
@@ -196,9 +197,6 @@ function createTripMap() {
 					$rtOutput += "Start Time: <i>" + $TripData["stop_sequence"][0]["departure_time"] + "</i><br />";
 					$rtOutput += "End Time: <i>" + $TripData["stop_sequence"][$TripData["stop_sequence"].length - 1]["arrival_time"] + "</i><br />";
 					$("#route-out").html($rtOutput);
-
-					// Add Google Maps Event Handler for Idle Condition
-					google.maps.event.addListener($map, "idle", ehMapIdle()); // Map Idle After Change Event Handler
 				}
 				else {
 					alert($tdMsg); // Development - Handle through Bootstrap in production
@@ -249,9 +247,9 @@ function createUUID() {
 	return;
 }
 
-// Function to Control Map Zoom Event Handler
-function ehMapIdle() {
-	alert('good');
+// Function to Control Map Click Event Handler
+function ehMapClick() {
+	//alert('good');
 	console.log($map);
 	return;
 }
@@ -260,6 +258,9 @@ function ehMapIdle() {
 function initMap() {
 	// Create New Google Maps Object
 	$map = new google.maps.Map($('#gmap')[0], $mapOptions);
+
+	// Add Google Maps Event Handler for Idle Condition
+	//google.maps.event.addListener($map, "idle", ehMapIdle()); // Map Idle After Change Event Handler
 	
 	return;
 }
@@ -601,34 +602,80 @@ function insertStr(str, index, value) {
 
 // When HTML Document Loaded, Add Event Listeners Here
 $(document).ready(function() {
-	// Event Handler to Create Map from Route Data
-	$("#create-map").on("click", function (e) {
-		createTripMap();
-	});	
+	// Procedures to call with AJAX Start
+	$(document).ajaxStart(function() {
+		// Start Spinner Object
+		$("<div id='spinner_center' style='position:fixed;top:200px;left:49%;'>&nbsp;</div>").appendTo("body");
+		$spinner.spin($("#spinner_center")[0]);
+		$ajax_cnt++;
+	});
 
+	// Procedures to call with AJAX Stop
+	$(document).ajaxStop(function() {
+		// Stop Spinner Object
+		$ajax_cnt--;
+		if ($ajax_cnt <= 0) {
+			$spinner.stop();
+			$("#spinner_center").remove();
+			$ajax_cnt = 0;
+		}
+	});
+
+
+
+	/* INITIALIZE ON DOCUMENT READY */
+
+	// Initialize Google Maps Object on Page Ready
+	//google.maps.event.addDomListener(window, 'load', initMap());
+
+
+	// Initialize Route Date/Time Picker
+	$("#datetime").datetimepicker({
+		format: "ddd MMM DD YYYY, HH:mm"
+		//defaultDate: new Date("2015-07-01"),
+		//minDate: new Date("2015-07-01 00:00"),
+		//maxDate: new Date("2015-07-31 23:59")
+	});
+	$("#datetime").children().prop("disabled", true);
+
+	// Event Handler to Load Transit Routes on Transit Agency Change
+	$("#agency").change(function() {
+		loadRoutes();
+	});
+
+
+	/* EVENT HANDLERS */
+
+	// Event Handler to Create Map from Route Data
+	$("#create-map").on("click", function() {
+		createTripMap();
+	});
+	// Event Handler to Manage Clicks on Google Map
+	$("#gmap").on("click", function() {
+		ehMapClick();
+	});	
 	// Event Handler to Load Selected Agency ZIP on Click
-	$("#load-agency").on("click", function (e) {
+	$("#load-agency").on("click", function() {
 		loadAgency();
 	});
-
 	// Event Handler to Select Feed Agency on Click
-	$("#select-feed").on("click", function (e) {
+	$("#select-feed").on("click", function() {
 		selectFeed();
 	});
-
 	// Event Handler to Select Upload Method on Click
-	$("#select-zip").on("click", function (e) {
+	$("#select-zip").on("click", function() {
 		selectZIP();
 	});
-
-	// TEMP FOR TESTING
-	$("#remuuid").on("click", function (e) {
-		removeUUID();
+	// Event Handler to Upload ZIP from URL or File
+	$("#upload-ZIP").on("click", function() {
+		uploadZIP();
 	});
 
-	// Event Handler to Upload ZIP from URL or File
-	$("#upload-ZIP").on("click", function (e) {
-		uploadZIP();
+
+
+	// TEMP FOR TESTING
+	$("#remuuid").on("click", function() {
+		removeUUID();
 	});
 
 	// Event Handler for All Popovers
@@ -665,7 +712,7 @@ $(document).ready(function() {
 	});*/
 });
 
-// Determine ZIP Radio Button Value and Call Function
+// Determine ZIP Radio Button Value and Call Function //// CONSIDER MOVING INTO DOC READY
 $(document).on("change", "input[name='ziptype']:radio", function() {
 	$ZipType = $(this).val();
 	$('#upload-ZIP').prop('disabled', false);
@@ -681,40 +728,8 @@ $(document).on("change", "input[name='ziptype']:radio", function() {
 	}
 });
 
-// Global functions to show/hide spinner on ajax requests
-$(document).ajaxStart(function() {
-   $("<div id='spinner_center' style='position:fixed;top:70px;left:49%;'>&nbsp;</div>").appendTo("body");
-   spinner.spin($("#spinner_center")[0]);
-   ajax_cnt++;
-});
-$(document).ajaxStop(function() {
-   ajax_cnt--;
-   if (ajax_cnt <= 0) {
-      spinner.stop();
-      $("#spinner_center").remove();
-      ajax_cnt = 0;
-   }
-});
-
-// Event Handler on Transit Agency Change, Load Transit Routes
-$("#agency").change(function() {
-	loadRoutes();
-});
-
-// Initialize Route Date/Time Picker
-$("#datetime").datetimepicker({
-	format: "ddd MMM DD YYYY, HH:mm"
-	//defaultDate: new Date("2015-07-01"),
-	//minDate: new Date("2015-07-01 00:00"),
-	//maxDate: new Date("2015-07-31 23:59")
-});
-$("#datetime").children().prop("disabled", true);
-
-// Initialize Google Maps DOM and Event Handlers on Page Load
-google.maps.event.addDomListener(window, 'load', initMap()); // Initialize Map Object
-
 // Create and/or Verify Unique User ID on Client Side
-createUUID();
+createUUID(); //// TEMP - CONSIDER MOVING INTO DOCUMENT READY FOR PRODUCTION
 
 
 // ##########################################################################################################
