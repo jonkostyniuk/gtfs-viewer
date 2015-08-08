@@ -1,23 +1,23 @@
 # ##########################################################################################################
 # GTFS DATA EXTRACTOR
 # Created by Jon Kostyniuk on 28MAY2015
-# Last modified by Jon Kostyniuk on 28MAY2015
+# Last modified by Jon Kostyniuk on 08AUG2015
 # Property of JK Enterprises
-# v0.01a
+# v0.1a
 # ##########################################################################################################
 #
 # Version History:
 # ----------------
-# 28MAY2015 v0.01a - JK
-#   - Initial Version.
+# 08AUG2015 v0.1a - JK
+#   - Initial Version
 #
 # Usage:
 # ------
-# Describe usage.
+# Called by 'flaskapp.py' to handle API requests.
 #
 # Instructions:
 # -------------
-# None currently.
+# None - Called Automatically
 #
 
 # ##########################################################################################################
@@ -245,10 +245,29 @@ def getRoutes(uuid, AgencyID):
   return json.dumps(jsondata)
 
 # Function to Get Bus Stop Points
-def getStopPoints(upLat, loLat, ltLng, rtLng):
+def getStopPoints(uuid, AgencyID, bounds):
+  # Define UUID and Preset Agency Folder Path
+  datapath = DATA_FOLDER + str(uuid) + "/" + str(AgencyID) + "/"
+  jsondata = {}
+  jsondata["uuid"] = str(uuid)
+  jsondata["agency_id"] = int(AgencyID)
+  jsondata["bounds"] = bounds
 
+  # Lookup Stops within given bounds
+  pdStops = pd.read_csv(datapath + "stops.txt", encoding="utf-8-sig")
+  pdStops = pdStops[["stop_id", "stop_name", "stop_lat", "stop_lon"]] # Limit to required fields, per GTFS Documentation
+  pdStops = pdStops[(pdStops.stop_lat >= bounds["loLat"]) & (pdStops.stop_lat <= bounds["upLat"]) & (pdStops.stop_lon >= bounds["ltLng"]) & (pdStops.stop_lon <= bounds["rtLng"])]
+  pdStops = pdStops.reset_index(drop=True)
 
-  return json.dumps("hello")
+  # Transform Data Object into List
+  dStops = pdStops.transpose().to_dict() # Transform to transposed dictionary object
+  # Transfrom from dictionary to list object
+  lStops = []
+  for seqk, seqv in dStops.iteritems():
+    lStops.append(seqv) # Save sequence value, not key
+  jsondata["stops"] = lStops
+
+  return json.dumps(jsondata)
 
 
 # HELPER (MONKEY) FUNCTIONS

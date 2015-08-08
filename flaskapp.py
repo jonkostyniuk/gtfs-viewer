@@ -88,7 +88,7 @@ def apiRoutes():
 # Function to Get Bus Stop Points
 @app.route("/api/stops", methods=["POST"])
 def apiGetStopPoints():
-    return gv.getStopPoints(fl.request.json["upLat"], fl.request.json["loLat"], fl.request.json["ltLng"], fl.request.json["rtLng"])
+    return gv.getStopPoints(fl.request.json["uuid"], fl.request.json["agency_id"], fl.request.json["bounds"])
 
 # Function to Create Unique User ID
 @app.route("/api/uuid", methods=["GET"])

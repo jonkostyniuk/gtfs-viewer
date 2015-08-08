@@ -263,17 +263,34 @@ function ehMapClick() {
 		var $curBounds = $map.getBounds();
 		// Save Map Bound Coordinates
 		scMapBndCoord("set", $curBounds);
-
+		var $reqData = {
+			"uuid": $UUID,
+			"agency_id": $('#agency').val().split("aID_")[1],
+			"bounds": $MapBounds
+		}
 		// AJAX Call and JSON Response
 		$.ajax({
 			url: "./api/stops",
 			method: "POST",
 			contentType: "application/json",
-			data: JSON.stringify($MapBounds),
+			data: JSON.stringify($reqData),
 			dataType: "json",
 			success: function($data) {
 				// Save Global JSON Data
 				$BusStops = $data;
+
+				// If Stops present, map to current bounds
+				if($BusStops["stops"].length > 0) {
+					
+					for(var $i = 0; $i < $BusStops["stops"].length; $i++) {
+
+
+
+
+						x=0;
+					}
+				}
+
 
 				//// HANDLE STOP POINT DATA HERE
 
