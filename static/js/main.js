@@ -30,7 +30,15 @@ var $mapOptions = { // Map Options Variables
 	zoom: 5,
 	center: new google.maps.LatLng(49.895529, -97.138449)
 };
+var $MapBounds = { // Map Bounds Coordinates
+	upLat: null,
+	loLat: null,
+	ltLng: null,
+	rtLng: null
+};
 var $ehMapIdle = null; // Google Map Idle Event Handler Object
+var $bsZoom = 17; // Threshold zoom level to show bus stop locations
+var $BusStops = null; // JSON Object for Bus Stops Data
 google.setOnLoadCallback(initMap); // Asynchronous Call Back to Initialize Map
 
 // GTFS Data Variables
@@ -249,8 +257,46 @@ function createUUID() {
 
 // Function to Control Map Click Event Handler
 function ehMapClick() {
-	//alert('good');
-	console.log($map);
+	// Check that map meets zoom threshold
+	if($map.getZoom() >= $bsZoom) {
+		// Get Current Map Bounds
+		var $curBounds = $map.getBounds();
+		// Save Map Bound Coordinates
+		scMapBndCoord("set", $curBounds);
+
+		// AJAX Call and JSON Response
+		$.ajax({
+			url: "./api/stops",
+			method: "POST",
+			contentType: "application/json",
+			data: JSON.stringify($MapBounds),
+			dataType: "json",
+			success: function($data) {
+				// Save Global JSON Data
+				$BusStops = $data;
+
+				//// HANDLE STOP POINT DATA HERE
+
+			},
+		    error: function ($jqXHR, $textStatus, $errorThrown) {
+	            if ($jqXHR.status == 500) {
+	            	alert("Internal error: " + $jqXHR.responseText);
+	            } else {
+	            	alert("Unexpected error!!");
+	            }
+	        }
+		});
+
+
+
+
+	}
+	else {
+		x=0;
+		// Put remove bus stop visual code here
+	}
+
+
 	return;
 }
 
@@ -258,10 +304,9 @@ function ehMapClick() {
 function initMap() {
 	// Create New Google Maps Object
 	$map = new google.maps.Map($('#gmap')[0], $mapOptions);
-
-	// Add Google Maps Event Handler for Idle Condition
-	//google.maps.event.addListener($map, "idle", ehMapIdle()); // Map Idle After Change Event Handler
 	
+	google.maps.event.addListener($map, "idle", ehMapClick);
+
 	return;
 }
 
@@ -560,6 +605,26 @@ function parseGTFS($gtfsjson) {
 	return;
 }
 
+// Function to Set or Clear Map Bound Coordinates
+function scMapBndCoord($scsave, $mbounds) {
+	var $NE = $mbounds.getNorthEast();
+	var $SW = $mbounds.getSouthWest();
+	if($scsave == "set") {
+		$MapBounds["upLat"] = $NE.lat();
+		$MapBounds["loLat"] = $SW.lat();
+		$MapBounds["ltLng"] = $SW.lng();
+		$MapBounds["rtLng"] = $NE.lng();
+	}
+	else {
+		$MapBounds["upLat"] = null;
+		$MapBounds["loLat"] = null;
+		$MapBounds["ltLng"] = null;
+		$MapBounds["rtLng"] = null;
+	}
+
+	return;
+}
+
 // Functions to Validate Trip Data
 function valTripData($tdata) {
 	if($tdata["service_id"] == []) {
@@ -622,12 +687,7 @@ $(document).ready(function() {
 	});
 
 
-
 	/* INITIALIZE ON DOCUMENT READY */
-
-	// Initialize Google Maps Object on Page Ready
-	//google.maps.event.addDomListener(window, 'load', initMap());
-
 
 	// Initialize Route Date/Time Picker
 	$("#datetime").datetimepicker({
@@ -650,10 +710,13 @@ $(document).ready(function() {
 	$("#create-map").on("click", function() {
 		createTripMap();
 	});
-	// Event Handler to Manage Clicks on Google Map
-	$("#gmap").on("click", function() {
+	// Event Handler to Manage Clicks and Double Clicks on Google Map
+	/*$("#gmap").on("click", function() {
 		ehMapClick();
 	});	
+	$("#gmap").on("dblclick", function() {
+		ehMapClick();
+	});	*/
 	// Event Handler to Load Selected Agency ZIP on Click
 	$("#load-agency").on("click", function() {
 		loadAgency();

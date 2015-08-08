@@ -243,7 +243,13 @@ def getRoutes(uuid, AgencyID):
   jsondata["success"] = "true"
 
   return json.dumps(jsondata)
-  
+
+# Function to Get Bus Stop Points
+def getStopPoints(upLat, loLat, ltLng, rtLng):
+
+
+  return json.dumps("hello")
+
 
 # HELPER (MONKEY) FUNCTIONS
 # -------------------------
