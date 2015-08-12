@@ -1,7 +1,7 @@
-# GTFS Viewer #
+# GTFS Transit Route Viewer #
 *This application is a viewer to display general transit feed specification (GTFS) data in a web browser. Its intent is to act as an auditing tool for GTFS data or to be modified for implementation with a transit agency trip planning system.*
 
-[![GTFS Viewer Screenshot](https://github.com/jonkostyniuk/gtfs-viewer/blob/master/SCREENSHOT.png?raw=true)](https://openshift.redhat.com/app/console/application_type/custom?cartridges%5B%5D=python-2.7&initial_git_url=https%3A%2F%2Fgithub.com%2Fryanj%2Fflask-base.git&name=flask)
+[![GTFS Viewer Screenshot](https://github.com/jonkostyniuk/gtfs-viewer/blob/master/SCREENSHOT.png?raw=true)](https://github.com/jonkostyniuk/gtfs-viewer/blob/master/SCREENSHOT.png?raw=true)
 
 ## Versions ##
 V0.1a, Build XX, Released 2015-08-XX (COMING SOON)
@@ -22,8 +22,13 @@ The current version has primarily been released as proof-of-concept and is not r
 
 Development and testing to date has primarily been in the *Google Chrome* browser. Unexpected functionality may occur with other browsers at this time.
 
-Open-source data was used in the testing of this application from the following transit agencies:
-* x
+Open-source GTFS transit data was used in the testing of this application from the following transit agencies:
+* [Calgary Transit](http://www.calgarytransit.com)
+* [Halifax Transit](http://www.halifax.ca/transit/)
+* [Kingston Transit](http://www.kingstontransit.ca)
+* [Saskatoon Transit](https://transit.saskatoon.ca/)
+* [Winnipeg Transit](http://www.winnipegtransit.com)
+* [York Region Transit](http://www.yrt.ca)
 
 ## Dependencies ##
 The GTFS Viewer is built upon several third-party, open-source dependency packages to provide functionality.
