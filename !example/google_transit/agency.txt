@@ -1,2 +1,0 @@
-agency_phone,agency_fare_url,agency_url,agency_id,agency_name,agency_timezone,agency_lang
-905-762-2100,http://yrt.ca/en/farespasses/prices.asp,http://www.yrt.ca,YRT,York Region Transit,America/Toronto,en
