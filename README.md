@@ -12,7 +12,7 @@
 V0.1a, Build XX, Released 2015-08-XX (COMING SOON)
 
 ## Implementation ##
-Start a local webserver by running the following from the command line:
+Start a local web server by running the following from the command line:
 
 	python app.py
 	
@@ -26,6 +26,9 @@ This software is currently considered in ALPHA status, meaning that testing is s
 The current version has primarily been released as proof-of-concept and is not ready for production purposes at this time.
 
 Development and testing to date has primarily been in the *Google Chrome* browser. Unexpected functionality may occur with other browsers at this time.
+
+Open-source data was used in the testing of this application from the following transit agencies:
+* x
 
 ## Dependencies ##
 The GTFS Viewer is built upon several third-party, open-source dependency packages to provide functionality.
