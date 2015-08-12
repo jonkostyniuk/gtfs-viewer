@@ -1,12 +1,7 @@
 # GTFS Viewer #
 *This application is a viewer to display general transit feed specification (GTFS) data in a web browser. Its intent is to act as an auditing tool for GTFS data or to be modified for implementation with a transit agency trip planning system.*
 
-[SCREENSHOT HERE]
-
-[![Launch on OpenShift](http://launch-shifter.rhcloud.com/button.svg)](https://openshift.redhat.com/app/console/application_type/custom?cartridges%5B%5D=python-2.7&initial_git_url=https%3A%2F%2Fgithub.com%2Fryanj%2Fflask-base.git&name=flask)
-[Learn Markdown](https://bitbucket.org/tutorials/markdowndemo)
-
-[SCREENSHOT HERE]
+[![GTFS Viewer Screenshot](https://github.com/jonkostyniuk/gtfs-viewer/blob/master/SCREENSHOT.png?raw=true)](https://openshift.redhat.com/app/console/application_type/custom?cartridges%5B%5D=python-2.7&initial_git_url=https%3A%2F%2Fgithub.com%2Fryanj%2Fflask-base.git&name=flask)
 
 ## Versions ##
 V0.1a, Build XX, Released 2015-08-XX (COMING SOON)
