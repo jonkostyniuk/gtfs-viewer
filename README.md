@@ -60,6 +60,14 @@ Ongoing development of this repository may include the following potential featu
 * Upload functionality for zipped GTFS files.
 * Inter-relation with other stops and routes.
 
+## Project Inspiration ##
+Why did I create this project? Honestly, similar applications have been created for transit agencies, so this really is nothing new.
+
+This project was created so that I could further develop my skills in the following areas:
+* Using the Flask Python framework for API backend development.
+* Working with the GTFS protocol for transit planning and routing.
+* Gain more experience using the Pandas Python package for data analysis.
+
 ## Contact ##
 For questions or information about this repository, please contact:
 
