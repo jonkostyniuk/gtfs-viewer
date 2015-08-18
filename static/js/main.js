@@ -78,6 +78,7 @@ var $gmMarkers = { // Google Map Marker References
 	blue: "http://maps.google.com/mapfiles/ms/icons/blue-dot.png",
 	yellow: "http://maps.google.com/mapfiles/ms/icons/yellow-dot.png"
 };
+var $bsMarkers = []; // Bus Stop Markers Object Initialization
 
 // AJAX Loading 'spin.js' Variables
 var $SpinOpts = { // Set Spin Options
@@ -278,22 +279,32 @@ function ehMapClick() {
 			success: function($data) {
 				// Save Global JSON Data
 				$BusStops = $data;
-
+				getBusStopInfo(); // Function call to supplement data - '$BusStops' global variable modified
 				// If Stops present, map to current bounds
 				if($BusStops["stops"].length > 0) {
-					
+					// Clear existing bus stop points
+				    for (var $i in $bsMarkers) {
+				    	$bsMarkers[$i].setMap(null);
+				    }
+				    $bsMarkers = [];
+					// Loop through and plot stop points
 					for(var $i = 0; $i < $BusStops["stops"].length; $i++) {
-
-
-
-
-						x=0;
+						// Check if on current trip route
+						if($BusStops["stops"][$i]["on_trip"]) $mcolor = "blue";
+						else $mcolor = "yellow";
+						// Map Current Bus Stop Lat/Lng Object
+						var $bspt = new google.maps.LatLng(
+							$BusStops["stops"][$i]["stop_lat"],
+							$BusStops["stops"][$i]["stop_lon"]
+							);				
+						var $bsmarker = new google.maps.Marker({
+							position: $bspt,
+							map: $map,
+							icon: $gmMarkers[$mcolor]
+						});
+						$bsMarkers.push($bsmarker);
 					}
 				}
-
-
-				//// HANDLE STOP POINT DATA HERE
-
 			},
 		    error: function ($jqXHR, $textStatus, $errorThrown) {
 	            if ($jqXHR.status == 500) {
@@ -303,16 +314,14 @@ function ehMapClick() {
 	            }
 	        }
 		});
-
-
-
-
 	}
 	else {
-		x=0;
-		// Put remove bus stop visual code here
+		// Clear existing bus stop points
+		for (var $i in $bsMarkers) {
+			$bsMarkers[$i].setMap(null);
+		}
+		$bsMarkers = [];
 	}
-
 
 	return;
 }
@@ -581,6 +590,33 @@ function aIsOfficial($isOfficial) {
 	else {
 		return "<span class='glyphicon glyphicon-star-empty' aria-hidden='true' style='color:#999999'></span>";
 	}	
+}
+
+// Function to Supplement Bus Stop Data
+function getBusStopInfo() {
+	/* //// START HERE ADD SUPPLEMENT DATA TO BUS STOPS
+
+	*/
+	for (var $i in $BusStops["stops"]) {
+		$found = false;
+		for (var $j in $TripData["stop_sequence"]) {
+			if(!$found) {
+				// If bus stop on current route, supplement data from trip data
+				if($BusStops["stops"][$i]["stop_id"] == $TripData["stop_sequence"][$j]["stop_id"]) {
+					$found = true;
+					$BusStops["stops"][$i]["on_trip"] = true;
+					$BusStops["stops"][$i]["arrival_time"] = $TripData["stop_sequence"][$j]["arrival_time"];
+					$BusStops["stops"][$i]["departure_time"] = $TripData["stop_sequence"][$j]["departure_time"];
+				}
+				else { // When bus stop not within trip route
+					$BusStops["stops"][$i]["on_trip"] = false;
+					$BusStops["stops"][$i]["arrival_time"] = "";
+					$BusStops["stops"][$i]["departure_time"] = "";
+				}
+			}
+		}
+	}
+	return;
 }
 
 // Function to Convert ISO Date String to Long Date Format
