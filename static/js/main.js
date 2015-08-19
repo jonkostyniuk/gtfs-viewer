@@ -79,6 +79,7 @@ var $gmMarkers = { // Google Map Marker References
 	yellow: "http://maps.google.com/mapfiles/ms/icons/yellow-dot.png"
 };
 var $bsMarkers = []; // Bus Stop Markers Object Initialization
+var $bsInfoWindow = null; // Bus Stop Marker Info Window Initialization
 
 // AJAX Loading 'spin.js' Variables
 var $SpinOpts = { // Set Spin Options
@@ -278,15 +279,21 @@ function ehMapClick() {
 			dataType: "json",
 			success: function($data) {
 				// Save Global JSON Data
+				var $prevBusStops = $BusStops //// USE TO COMPARE WITH NEW LIST FOR MARKER REMOVAL
 				$BusStops = $data;
 				getBusStopInfo(); // Function call to supplement data - '$BusStops' global variable modified
 				// If Stops present, map to current bounds
 				if($BusStops["stops"].length > 0) {
 					// Clear existing bus stop points
 				    for (var $i in $bsMarkers) {
+				    	//// ADD IF STATEMENTS HERE TO REMOVE ONLY IF NOT IN NEW LIST
 				    	$bsMarkers[$i].setMap(null);
 				    }
 				    $bsMarkers = [];
+				    // Define Marker Info Window Object Placeholder
+				    $bsInfoWindow = new google.maps.InfoWindow({
+						content: "holding..."
+					});
 					// Loop through and plot stop points
 					for(var $i = 0; $i < $BusStops["stops"].length; $i++) {
 						// Check if on current trip route
@@ -300,8 +307,15 @@ function ehMapClick() {
 						var $bsmarker = new google.maps.Marker({
 							position: $bspt,
 							map: $map,
-							icon: $gmMarkers[$mcolor]
+							icon: $gmMarkers[$mcolor],
+							html: "<span style='color:blue'>blue</span>" //// CALL FUNCTION TO SET HTML VALUES HERE
 						});
+						// Add event listener for marker click
+      					google.maps.event.addListener($bsmarker, "click", function() {
+    						//infowindow.open(map, marker);
+							$bsInfoWindow.setContent(this.html);
+							$bsInfoWindow.open($map, this);
+  						});
 						$bsMarkers.push($bsmarker);
 					}
 				}
