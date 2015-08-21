@@ -26,9 +26,89 @@
 
 // Map Object Variables
 var $map = null; // Google Map Variable
+var $mapStyles = [
+	{
+		"featureType": "administrative.land_parcel",
+		"elementType": "all",
+		"stylers": [
+			{"visibility": "off"}
+		]
+	},{
+		"featureType": "landscape.man_made",
+		"elementType": "all",
+		"stylers": [
+			{"visibility": "off"}
+		]
+	},{
+		"featureType": "poi",
+		"elementType": "labels",
+		"stylers": [
+			{"visibility": "off"}
+		]
+	},{
+		"featureType": "road",
+		"elementType": "labels",
+		"stylers": [
+			{"visibility": "simplified"},
+			{"lightness": 20}
+		]
+	},{
+		"featureType": "road.highway",
+		"elementType": "geometry",
+		"stylers": [
+			{"hue": "#f49935"}
+		]
+	},{
+		"featureType": "road.highway",
+		"elementType": "labels",
+		"stylers": [
+			{"visibility": "simplified"}
+		]
+	},{
+		"featureType": "road.arterial",
+		"elementType": "geometry",
+		"stylers": [
+			{"hue": "#fad959"}
+		]
+	},{
+		"featureType": "road.arterial", 
+		"elementType": "labels",
+		"stylers": [
+			{"visibility": "off"}
+		]
+	},{
+		"featureType": "road.local",
+		"elementType": "geometry",
+		"stylers": [
+			{"visibility": "simplified"}
+		]
+	},{
+		"featureType": "road.local",
+		"elementType": "labels",
+		"stylers": [
+			{"visibility": "simplified"}
+		]
+	},{
+		"featureType": "transit",
+		"elementType": "all",
+		"stylers": [
+			{"visibility": "off"}
+		]
+	},{
+		"featureType": "water",
+		"elementType": "all",
+		"stylers": [
+			{"hue":"#a1cdfc"},
+			{"saturation":30},
+			{"lightness":49}
+		]
+	}
+];
 var $mapOptions = { // Map Options Variables
 	zoom: 5,
-	center: new google.maps.LatLng(49.895529, -97.138449)
+	center: new google.maps.LatLng(49.895529, -97.138449),
+	styles: $mapStyles,
+	mapTypeControl: false,
 };
 var $MapBounds = { // Map Bounds Coordinates
 	upLat: null,
@@ -85,18 +165,18 @@ var $bsInfoWindow = null; // Bus Stop Marker Info Window Initialization
 var $SpinOpts = { // Set Spin Options
    lines: 13, // The number of lines to draw
    length: 7, // The length of each line
-   width: 4, // The line thickness
-   radius: 10, // The radius of the inner circle
+   width: 5, // The line thickness
+   radius: 12, // The radius of the inner circle
    rotate: 0, // The rotation offset
-   color: '#efefef', // #rgb or #rrggbb
+   color: "#efefef", // #rgb or #rrggbb
    speed: 0.75, // Rounds per second
    trail: 50, // Afterglow percentage
    shadow: true, // Whether to render a shadow
    hwaccel: false, // Whether to use hardware acceleration
-   className: 'spinner', // The CSS class to assign to the spinner
+   className: "spinner", // The CSS class to assign to the spinner
    zIndex: 2000000000, // The z-index (defaults to 2000000000)
-   top: 'auto', // Top position relative to parent in px
-   left: 'auto' // Left position relative to parent in px
+   top: "auto", // Top position relative to parent in px
+   left: "auto" // Left position relative to parent in px
 };
 var $spinner = new Spinner($SpinOpts); // Spinner Object Initialize
 var $ajax_cnt = 0; // Support for parallel AJAX requests
@@ -279,26 +359,36 @@ function ehMapClick() {
 			dataType: "json",
 			success: function($data) {
 				// Save Global JSON Data
-				var $prevBusStops = $BusStops //// USE TO COMPARE WITH NEW LIST FOR MARKER REMOVAL
+				var $prevBusStops = $BusStops;
 				$BusStops = $data;
 				getBusStopInfo(); // Function call to supplement data - '$BusStops' global variable modified
+				$modstops = sortBusStops($prevBusStops, $BusStops);
+				$addBusStops = $modstops[0];
+				$remBusStops = $modstops[1];
+				//console.log($addBusStops);
+				//console.log($remBusStops);
+
+
+				//// NEED TO ADD FOR NEW LOCATIONS AND REMOVE OLD, function to sort add and removeal stops
+
+				
 				// If Stops present, map to current bounds
 				if($BusStops["stops"].length > 0) {
 					// Clear existing bus stop points
 				    for (var $i in $bsMarkers) {
 				    	//// ADD IF STATEMENTS HERE TO REMOVE ONLY IF NOT IN NEW LIST
-				    	$bsMarkers[$i].setMap(null);
+				    	$bsMarkers[$i]["marker"].setMap(null);
 				    }
 				    $bsMarkers = [];
 				    // Define Marker Info Window Object Placeholder
 				    $bsInfoWindow = new google.maps.InfoWindow({
-						content: "holding..."
+						content: "Loading..."
 					});
 					// Loop through and plot stop points
 					for(var $i = 0; $i < $BusStops["stops"].length; $i++) {
 						// Check if on current trip route
-						if($BusStops["stops"][$i]["on_trip"]) $mcolor = "blue";
-						else $mcolor = "yellow";
+						if($BusStops["stops"][$i]["on_trip"]) $mcolor = "blue"; // Blue for route stops
+						else $mcolor = "yellow"; // Yellow for other stops
 						// Map Current Bus Stop Lat/Lng Object
 						var $bspt = new google.maps.LatLng(
 							$BusStops["stops"][$i]["stop_lat"],
@@ -308,15 +398,14 @@ function ehMapClick() {
 							position: $bspt,
 							map: $map,
 							icon: $gmMarkers[$mcolor],
-							html: "<span style='color:blue'>blue</span>" //// CALL FUNCTION TO SET HTML VALUES HERE
+							html: makeBusStopHTML($BusStops["stops"][$i])
 						});
 						// Add event listener for marker click
       					google.maps.event.addListener($bsmarker, "click", function() {
-    						//infowindow.open(map, marker);
 							$bsInfoWindow.setContent(this.html);
 							$bsInfoWindow.open($map, this);
   						});
-						$bsMarkers.push($bsmarker);
+						$bsMarkers.push({"id": $BusStops["stops"][$i]["stop_id"], "marker": $bsmarker});
 					}
 				}
 			},
@@ -331,8 +420,9 @@ function ehMapClick() {
 	}
 	else {
 		// Clear existing bus stop points
+		$BusStops = null;
 		for (var $i in $bsMarkers) {
-			$bsMarkers[$i].setMap(null);
+			$bsMarkers[$i]["marker"].setMap(null);
 		}
 		$bsMarkers = [];
 	}
@@ -608,9 +698,7 @@ function aIsOfficial($isOfficial) {
 
 // Function to Supplement Bus Stop Data
 function getBusStopInfo() {
-	/* //// START HERE ADD SUPPLEMENT DATA TO BUS STOPS
-
-	*/
+	// For each bus stop
 	for (var $i in $BusStops["stops"]) {
 		$found = false;
 		for (var $j in $TripData["stop_sequence"]) {
@@ -647,6 +735,25 @@ function ISOtoLongDate($isostr) {
 	else {
 		return "!ERROR";
 	}
+}
+
+// Function to Make Bus Stop HTML for Marker Info Windows
+function makeBusStopHTML($bsdata) {
+	if($bsdata["on_trip"]) {
+		var $bsHTML = "<div class='gmapinfo'>" +
+			"<b>" + $bsdata["stop_name"] + "</b><br />" +
+			"Stop ID: <i>" + $bsdata["stop_id"] + "</i><br />" +
+			"Arrival: <i>" + $bsdata["arrival_time"] + "</i><br />" +
+			"Departure: <i>" + $bsdata["departure_time"] + "</i><br />" +
+			"</div>";		
+	}
+	else {
+		var $bsHTML = "<div class='gmapinfo'>" +
+			"<b>" + $bsdata["stop_name"] + "</b><br />" +
+			"Stop ID: " + $bsdata["stop_id"] + "<br />" +
+			"</div>";		
+	}
+	return $bsHTML;
 }
 
 // Function to Parse GTFS Data
@@ -690,6 +797,34 @@ function scMapBndCoord($scsave, $mbounds) {
 	}
 
 	return;
+}
+
+// Function to Sort Previous and Current Bus Stops
+function sortBusStops($prevbs, $currbs) {
+	// Initialize add and remove lists
+	var $addbs = [];
+	var $rembs = [];
+	// Check for first condition
+	if($prevbs != null) {
+		// Look for added bus stop location data
+		for(var $i in $currbs["stops"]) {
+			var $found = false;
+			for(var $j in $prevbs["stops"]) {
+				if($currbs["stops"][$i]["stop_id"] == $prevbs["stops"][$j]["stop_id"]) $found = true;
+			}
+			if(!$found) $addbs.push($currbs["stops"][$i]);
+		}
+		// Look for removed bus stop location data
+		for(var $i in $prevbs["stops"]) {
+			var $found = false;
+			for(var $j in $currbs["stops"]) {
+				if($prevbs["stops"][$i]["stop_id"] == $currbs["stops"][$j]["stop_id"]) $found = true;
+			}
+			if(!$found) $rembs.push($prevbs["stops"][$i]);
+		}	
+	}
+	else $addbs = $currbs["stops"]; // On first condition
+	return [$addbs, $rembs];
 }
 
 // Functions to Validate Trip Data

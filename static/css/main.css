@@ -167,3 +167,8 @@ html, body {
     font-size: 1px;
     line-height: 0px;
 }
+
+/* GOOGLE MAP INFO WINDOW STYLING */
+.gmapinfo {
+    color: #000000;
+}
