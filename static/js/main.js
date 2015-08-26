@@ -1,14 +1,14 @@
 // ##########################################################################################################
 // GTFS CLIENT-SIDE APPLICATION
-// Created by Jon Kostyniuk on 28MAY2015
-// Last modified by Jon Kostyniuk on 28MAY2015
+// Created by Jon Kostyniuk on 25AUG2015
+// Last modified by Jon Kostyniuk on 25AUG2015
 // Property of JK Enterprises
 // v0.01a
 // ##########################################################################################################
 //
 // Version History:
 // ----------------
-// 28MAY2015 v0.01a - JK
+// 25AUG2015 v0.01a - JK
 //   - Initial Version.
 //
 // Usage:
@@ -159,7 +159,9 @@ var $gmMarkers = { // Google Map Marker References
 	yellow: "http://maps.google.com/mapfiles/ms/icons/yellow-dot.png"
 };
 var $bsMarkers = []; // Bus Stop Markers Object Initialization
-var $bsInfoWindow = null; // Bus Stop Marker Info Window Initialization
+var $bsInfoWindow= new google.maps.InfoWindow({ // Bus Stop Marker Info Window Initialization
+	content: "Loading..."
+});
 
 // AJAX Loading 'spin.js' Variables
 var $SpinOpts = { // Set Spin Options
@@ -365,47 +367,44 @@ function ehMapClick() {
 				$modstops = sortBusStops($prevBusStops, $BusStops);
 				$addBusStops = $modstops[0];
 				$remBusStops = $modstops[1];
-				//console.log($addBusStops);
-				//console.log($remBusStops);
+				console.log($addBusStops);
+				console.log($remBusStops);
 
-
-				//// NEED TO ADD FOR NEW LOCATIONS AND REMOVE OLD, function to sort add and removeal stops
-
-				
-				// If Stops present, map to current bounds
-				if($BusStops["stops"].length > 0) {
-					// Clear existing bus stop points
+				// If Remove Stops Present
+				if($remBusStops.length > 0) {
 				    for (var $i in $bsMarkers) {
-				    	//// ADD IF STATEMENTS HERE TO REMOVE ONLY IF NOT IN NEW LIST
-				    	$bsMarkers[$i]["marker"].setMap(null);
+				    	for (var $j in $remBusStops) {
+				    		if($remBusStops[$j]["stop_id"] == $bsMarkers[$i]["id"])
+				    			$bsMarkers[$i]["marker"].setMap(null);
+				    	}
 				    }
-				    $bsMarkers = [];
-				    // Define Marker Info Window Object Placeholder
-				    $bsInfoWindow = new google.maps.InfoWindow({
-						content: "Loading..."
-					});
+				}
+
+				// If Add Stops Present
+				if($addBusStops.length > 0) {
 					// Loop through and plot stop points
-					for(var $i = 0; $i < $BusStops["stops"].length; $i++) {
+					for(var $i = 0; $i < $addBusStops.length; $i++) {
 						// Check if on current trip route
-						if($BusStops["stops"][$i]["on_trip"]) $mcolor = "blue"; // Blue for route stops
+						if($addBusStops[$i]["on_trip"]) $mcolor = "blue"; // Blue for route stops
 						else $mcolor = "yellow"; // Yellow for other stops
 						// Map Current Bus Stop Lat/Lng Object
 						var $bspt = new google.maps.LatLng(
-							$BusStops["stops"][$i]["stop_lat"],
-							$BusStops["stops"][$i]["stop_lon"]
+							$addBusStops[$i]["stop_lat"],
+							$addBusStops[$i]["stop_lon"]
 							);				
 						var $bsmarker = new google.maps.Marker({
 							position: $bspt,
 							map: $map,
 							icon: $gmMarkers[$mcolor],
-							html: makeBusStopHTML($BusStops["stops"][$i])
+							html: makeBusStopHTML($addBusStops[$i])
 						});
 						// Add event listener for marker click
       					google.maps.event.addListener($bsmarker, "click", function() {
+							if($bsInfoWindow) $bsInfoWindow.close(); // Close any open info windows BUG HERE
 							$bsInfoWindow.setContent(this.html);
 							$bsInfoWindow.open($map, this);
   						});
-						$bsMarkers.push({"id": $BusStops["stops"][$i]["stop_id"], "marker": $bsmarker});
+						$bsMarkers.push({"id": $addBusStops[$i]["stop_id"], "marker": $bsmarker});
 					}
 				}
 			},

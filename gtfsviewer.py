@@ -1,14 +1,14 @@
 # ##########################################################################################################
 # GTFS DATA EXTRACTOR
-# Created by Jon Kostyniuk on 28MAY2015
-# Last modified by Jon Kostyniuk on 08AUG2015
+# Created by Jon Kostyniuk on 25AUG2015
+# Last modified by Jon Kostyniuk on 25AUG2015
 # Property of JK Enterprises
 # v0.1a
 # ##########################################################################################################
 #
 # Version History:
 # ----------------
-# 08AUG2015 v0.1a - JK
+# 25AUG2015 v0.1a - JK
 #   - Initial Version
 #
 # Usage:
